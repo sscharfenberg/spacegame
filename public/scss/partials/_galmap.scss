@@ -1,0 +1,167 @@
+//! ********************************************************************************************************************
+// GALMAP.SCSS
+// contains all necessary styles for the galactic map
+// *********************************************************************************************************************
+//
+// Main Section ========================================================================================================
+.map.galactic {
+    position                           : relative;
+    max-width                          : 600px;
+    width                              : 100%;
+    background                         : #eee; // TODO: this color is temporary just to make layout easier
+    padding                            : 2%;
+//
+    // Main Drawing Stage - viewport and canvas ========================================================================
+    #mapViewPort {
+        overflow                       : hidden;
+        position                       : relative;
+        width                          : 100%;
+        height                         : 100px; // is set by galmap.src.js to correct value
+        background                     : #000;
+        z-index                        : 2;
+        &:hover {
+            cursor                     : move;
+        }
+        #mapCanvas {
+            z-index                    : 1;
+            position                   : relative;
+            background                 : image-url("background.map.stars.jpg");
+            background-size            : cover;
+
+        }
+    }
+//
+    // Horizontal Ruler With Coordinates - viewport and canvas =========================================================
+    #viewPortRulerHorz {
+        overflow                       : hidden;
+        position                       : relative;
+        width                          : 100%;
+        height                         : 25px;
+        margin-bottom                  : 5px;
+        background                     : #000;
+        border-top-right-radius        : 5px;
+        #rulerHorzCanvas {
+            z-index                    : 1;
+            position                   : relative;
+            &:hover {
+                cursor                 : e-resize;
+            }
+        }
+    }
+//
+    // Vertical Ruler With Coordinates - viewport and canvas ===========================================================
+    #viewPortRulerVert {
+        overflow                       : hidden;
+        position                       : relative;
+        width                          : 25px;
+        height                         : 100px; // this is set by galmap.src.js to correct value
+        background                     : #000;
+        border-bottom-left-radius      : 5px;
+        #rulerVertCanvas {
+            z-index                    : 1;
+            position                   : relative;
+            &:hover {
+                cursor                 : n-resize;
+            }
+        }
+    }
+//
+    // Focus Button top/left ===========================================================================================
+    .mapbutton.focushome {
+        width                          : 25px;
+        height                         : 25px;
+        display                        : inline-block;
+        position                       : relative;
+        margin-bottom                  : 5px;
+        vertical-align                 : middle;
+        text-indent                    : -1000em;
+        background                     : #000;
+        border-top-left-radius         : 5px;
+        &:before {
+            position                   : absolute;
+            left                       : 6px;
+            top                        : 6px;
+            display                    : inline-block;
+            content                    : "\E021";
+            text-indent                : 0;
+            margin                     : 0;
+            padding                    : 0;
+            font                       : 13px/13px 'Glyphicons Regular';
+            color                      : #fff;
+            vertical-align             : middle;
+            text-transform             : none;
+            -webkit-font-smoothing     : antialiased;
+            @include transition(all 500ms ease);
+        }
+        &:hover:before {
+            color                      : #99ccff;
+            @include transform(rotate(360deg));
+        }
+    }
+    // layout for the map area =========================================================================================
+    // theatre: the whole area; map + horizontal ruler + vertical ruler
+    // stage: the viewport for the canvas drawing area
+    .theatre {
+        position                       : relative;
+        width                          : 100%;
+        .stage.left {
+            float                      : left;
+            width                      : 25px;
+            margin-right               : 5px;
+        }
+        .stage.right {
+            margin-left                : 30px;
+        }
+    }
+
+    // Zoom Icons ======================================================================================================
+    .theatre .zoom {
+        position                       : absolute;
+        bottom                         : 0;
+        right                          : 0;
+        z-index                        : 5;
+        list-style-type                : none;
+        margin                         : 0;
+        padding                        : 0;
+        .icon {
+            display                    : block;
+            position                   : relative;
+            vertical-align             : middle;
+            text-indent                : -1000em;
+            width                      : 30px;
+            height                     : 30px;
+            background                 : rgba(#fff, 0.7);
+            @include transition(all 500ms ease);
+            &:before {
+                position               : absolute;
+                left                   : 4px;
+                top                    : 5px;
+                display                : inline-block;
+                text-indent            : 0;
+                margin                 : 0;
+                padding                : 0;
+                font                   : 20px/20px 'Glyphicons Regular';
+                color                  : #333;
+                vertical-align         : middle;
+                text-transform         : none;
+                -webkit-font-smoothing : antialiased;
+                @include transition(all 500ms ease);
+            }
+            &:last-child { margin-top  : 1px; }
+            &.in:before { content      : "\E237"; }
+            &.out:before { content     : "\E238"; }
+            &:hover { background       : rgba(#fff, 1); }
+            &:hover:before { color     : #000; }
+            &.disabled {
+                background             : rgba(#fff, 0.4);
+                cursor: not-allowed;
+            }
+            &.disabled:hover:before {
+                color                  : #333;
+
+            }
+        }
+    }
+
+}
+

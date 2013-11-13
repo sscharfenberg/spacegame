@@ -1,0 +1,138 @@
+{
+    "settings": {
+        "size": 20
+    },
+    "systems": [
+        {
+            "id": 0,
+            "owner": 0,
+            "spectral": "m",
+            "x": 0,
+            "y": 0
+        },
+        {
+            "id": 1,
+            "owner": 0,
+            "spectral": "g",
+            "x": 5,
+            "y": 1
+        },
+        {
+            "id": 2,
+            "owner": 15,
+            "spectral": "a",
+            "x": 2,
+            "y": 8
+        },
+        {
+            "id": 3,
+            "owner": 3,
+            "spectral": "l",
+            "x": 8,
+            "y": 4
+        },
+        {
+            "id": 4,
+            "owner": 0,
+            "spectral": "k",
+            "x": 3,
+            "y": 6
+        },
+        {
+            "id": 5,
+            "owner": 0,
+            "spectral": "t",
+            "x": 7,
+            "y": 9
+        },
+        {
+            "id": 6,
+            "owner": 0,
+            "spectral": "y",
+            "x": 11,
+            "y": 2
+        },
+        {
+            "id": 7,
+            "owner": 0,
+            "spectral": "b",
+            "x": 15,
+            "y": 3
+        },
+        {
+            "id": 8,
+            "owner": 0,
+            "spectral": "f",
+            "x": 19,
+            "y": 5
+        },
+        {
+            "id": 9,
+            "owner": 1,
+            "spectral": "o",
+            "x": 14,
+            "y": 15
+        }
+    ],
+    "wormholes": [
+        {
+            "id": 0,
+            "from": 4,
+            "to": 2
+        },
+        {
+            "id": 1,
+            "from": 0,
+            "to": 1
+        },
+        {
+            "id": 2,
+            "from": 2,
+            "to": 5
+        },
+        {
+            "id": 3,
+            "from": 1,
+            "to": 3
+        },
+        {
+            "id": 4,
+            "from": 3,
+            "to": 4
+        },
+        {
+            "id": 5,
+            "from": 1,
+            "to": 4
+        },
+        {
+            "id": 6,
+            "from": 3,
+            "to": 6
+        },
+        {
+            "id": 7,
+            "from": 6,
+            "to": 7
+        },
+        {
+            "id": 8,
+            "from": 7,
+            "to": 8
+        },
+        {
+            "id": 9,
+            "from": 5,
+            "to": 9
+        }
+    ],
+    "home": 9,
+    "my-systems": [
+        {
+            "id": 9
+        },
+        {
+            "id": 5
+        }
+    ]
+}

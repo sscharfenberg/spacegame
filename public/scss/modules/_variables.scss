@@ -1,0 +1,56 @@
+// *********************************************************************************************************************
+// VARIABLE DEFINITIONS
+// default variables used in all other scss files
+// *********************************************************************************************************************
+//
+// COLOR SCHEME ========================================================================================================
+//
+$baseColor1                 : #f2f2f2;
+$baseColor2                 : #4a4a4a;
+$baseColor3                 : #f89f36;
+//
+// Font weights ========================================================================================================
+$baseFontWeightLight: 100;
+$baseFontWeightRegular: 400;
+$baseFontWeightBold: 800;
+$baseFontWeight: $baseFontWeightRegular;
+//
+// AVAILABLE DEFAULT FONTS =============================================================================================
+$verdana: Verdana, Geneva, Arial, sans-serif;
+$arial: Arial, Verdana, sans-serif;
+$helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$times: Times, "Times New Roman", serif;
+//
+// DEFINE FONT FAMILIES ================================================================================================
+//
+$baseFontFamilyHdl: $verdana;
+$baseFontFamilyParagraph: droid_sansregular, serif;
+$baseFontSize: 1.6em;
+$baseLineHeight: 1.4em;
+$baseFontHdl: $baseFontWeight #{$baseFontSize}/#{$baseLineHeight} $baseFontFamilyHdl;
+$baseFontParagraph: $baseFontWeight #{$baseFontSize}/#{$baseLineHeight} $baseFontFamilyParagraph;
+//
+// VIEWPORT ============================================================================================================
+//
+// Viewport 0: Default
+$baseViewPort0              : 1024px;
+$baseViewPort1              : 890px;
+$baseViewPort2              : 650px;
+$baseViewPort3              : 430px;
+$baseViewPort4              : 280px;
+// Viewport 1: 650px - 880px
+$baseViewPort1Query         : "all and (max-width : #{$baseViewPort1}) and (min-width: #{$baseViewPort2})";
+// Viewport 2: smaller than 650px
+$baseViewPort2Query         : "all and (max-width : #{$baseViewPort2})";
+// Viewport 3: smaller than 430px
+$baseViewPort3Query         : "all and (max-width : #{$baseViewPort3})";
+// Viewport 4: smaller than 280px
+$baseViewPort4Query         : "all and (max-width : #{$baseViewPort4})";
+//
+// GRID ================================================================================================================
+//
+$baseGutterWidth            : 20px;
+$baseBoxPadding             : 20px;
+$baseBoxBorderWidth         : 5px;
+$baseHeaderHeight           : 40px;
+//
