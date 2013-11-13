@@ -491,9 +491,9 @@ window.galmap = window.galmap || {
 
         game.log(
             "drawing system",
-            " id: " + id + ", owner: " + galmap.mapdata.systems[id].owner + ", spectral: "
-            + galmap.mapdata.systems[id].spectral + ", x: " + coordX + "(" + canvasX + "), y: "
-            + coordY + "(" + canvasY + ")"
+            " id: " + id + ", owner: " + galmap.mapdata.systems[id].owner + ", spectral: " +
+            galmap.mapdata.systems[id].spectral + ", x: " + coordX + "(" + canvasX + "), y: " +
+            coordY + "(" + canvasY + ")"
         );
 
         $("#mapCanvas").drawImage({
