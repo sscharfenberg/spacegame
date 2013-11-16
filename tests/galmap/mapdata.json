@@ -1,75 +1,75 @@
 {
     "settings": {
-        "size": 20
+        "size": 50
     },
     "systems": [
         {
             "id": 0,
             "owner": 0,
-            "spectral": "m",
+            "spectral": 0,
             "x": 0,
             "y": 0
         },
         {
             "id": 1,
             "owner": 0,
-            "spectral": "g",
+            "spectral": 1,
             "x": 5,
             "y": 1
         },
         {
             "id": 2,
             "owner": 15,
-            "spectral": "a",
+            "spectral": 2,
             "x": 2,
             "y": 8
         },
         {
             "id": 3,
             "owner": 3,
-            "spectral": "l",
+            "spectral": 3,
             "x": 8,
             "y": 4
         },
         {
             "id": 4,
             "owner": 0,
-            "spectral": "k",
+            "spectral": 4,
             "x": 3,
             "y": 6
         },
         {
             "id": 5,
             "owner": 0,
-            "spectral": "t",
+            "spectral": 5,
             "x": 7,
             "y": 9
         },
         {
             "id": 6,
             "owner": 0,
-            "spectral": "y",
+            "spectral": 6,
             "x": 11,
             "y": 2
         },
         {
             "id": 7,
             "owner": 0,
-            "spectral": "b",
+            "spectral": 7,
             "x": 15,
             "y": 3
         },
         {
             "id": 8,
             "owner": 0,
-            "spectral": "f",
+            "spectral": 8,
             "x": 19,
             "y": 5
         },
         {
             "id": 9,
             "owner": 1,
-            "spectral": "o",
+            "spectral": 9,
             "x": 14,
             "y": 15
         }

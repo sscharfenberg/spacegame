@@ -6,10 +6,13 @@
 // Main Section ========================================================================================================
 .map.galactic {
     position                           : relative;
-    max-width                          : 600px;
     width                              : 100%;
+    max-width                          : 600px; // TODO: this value is temporary
     background                         : #eee; // TODO: this color is temporary just to make layout easier
     padding                            : 2%;
+    .hiddenImages {
+        display                        : none;
+    }
 //
     // Main Drawing Stage - viewport and canvas ========================================================================
     #mapViewPort {
@@ -117,8 +120,8 @@
     // Zoom Icons ======================================================================================================
     .theatre .zoom {
         position                       : absolute;
-        bottom                         : 0;
-        right                          : 0;
+        bottom                         : 5px;
+        right                          : 5px;
         z-index                        : 5;
         list-style-type                : none;
         margin                         : 0;
@@ -132,6 +135,8 @@
             height                     : 30px;
             background                 : rgba(#fff, 0.7);
             @include transition(all 500ms ease);
+            @include border-radius(2px);
+            box-shadow                 : 1px 1px 5px rgba(#000,0.8);
             &:before {
                 position               : absolute;
                 left                   : 4px;
@@ -145,21 +150,25 @@
                 vertical-align         : middle;
                 text-transform         : none;
                 -webkit-font-smoothing : antialiased;
-                @include transition(all 500ms ease);
+                @include transition(color 500ms ease);
             }
-            &:last-child { margin-top  : 1px; }
+            &:last-child { margin-top  : 5px; }
             &.in:before { content      : "\E237"; }
             &.out:before { content     : "\E238"; }
             &:hover { background       : rgba(#fff, 1); }
             &:hover:before { color     : #000; }
             &.disabled {
                 background             : rgba(#fff, 0.4);
-                cursor: not-allowed;
+                cursor                 : not-allowed;
             }
             &.disabled:hover:before {
                 color                  : #333;
 
             }
+        }
+        #currentZoomMarker {
+            background: #fff;
+            .active { font-weight: bold; }
         }
     }
 

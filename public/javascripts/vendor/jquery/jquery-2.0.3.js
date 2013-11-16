@@ -3265,8 +3265,8 @@ jQuery.support = (function( support ) {
 		div.style.cssText = "-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;top:1%";
 
 		// Workaround failing boxSizing test due to offsetWidth returning wrong value
-		// with some non-1 values of body zoom, ticket #13543
-		jQuery.swap( body, body.style.zoom != null ? { zoom: 1 } : {}, function() {
+		// with some non-1 values of body bindZoom, ticket #13543
+		jQuery.swap( body, body.style.bindZoom != null ? { bindZoom: 1 } : {}, function() {
 			support.boxSizing = div.offsetWidth === 4;
 		});
 
@@ -6234,7 +6234,7 @@ jQuery.extend({
 		"orphans": true,
 		"widows": true,
 		"zIndex": true,
-		"zoom": true
+		"bindZoom": true
 	},
 
 	// Add in properties whose names you wish to fix before

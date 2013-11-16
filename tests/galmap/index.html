@@ -13,13 +13,13 @@
 
         <h1>Game Tests: Galactic Map</h1>
         <ul>
-            <li>IE9+, other somewhat modern browsers</li>
+            <li>IE9+, other somewhat modern browsers (canvas, canvastext)</li>
             <li>map data is fetched from server via JSON.</li>
             <li>map stage is fluid; while the canvas is not. Smaller Screen size - smaller viewport for map, map is not scaled (css scaling of canvas sucks big time).<br />NO window.resize handler since noone but devs does it anyway.</li>
             <li>Map and ruler are draggable - drag one and both change.</li>
-            <li>snap back when dragged too far</li>
+            <li>check for collision with edges - map can not be dragged too far</li>
             <li>stars can be interacted with. at the moment, click on a star just outputs debug info to console since this is just a test. exact integration of map tbd.</li>
-            <li>Map can be zoomed. Three zoom levels available. Since we do not scale the map but rather redraw it (scaling makes the map blurry), the position of the central tile is remembered and the square centered after "zooming".</li>
+            <li>Map can be zoomed. Variable number of zoom levels available. Since we do not scale the map but rather redraw it, the position of the central tile is remembered and the square centered after "zooming".</li>
         </ul>
 
         <section class="map galactic clearfix">
@@ -42,6 +42,9 @@
                     <p><a href="" class="action button refresh">Try Again</a></p>
                 </div><!-- /.dialog.jsonfail -->
             </div><!-- /.overlay.jsonfail -->
+            <div class="hiddenImages">
+                <img src="../../public/images/stars.png" id="spriteStars" />
+            </div><!-- /.image.preloader -->
 
             <div class="theatre clearfix">
                 <div class="stage left">
@@ -55,11 +58,18 @@
                         <canvas id="rulerHorzCanvas" width="2000" height="25"></canvas>
                     </div>
                     <div id="mapViewPort">
-                        <canvas id="mapCanvas" width="2000" height="2000"></canvas>
+                        <canvas id="mapCanvas" width="2000" height="2000"></canvas><!-- TODO: remove width/height attributes -->
                     </div>
                     <nav role="navigation" class="zoom clearfix">
                         <a href="#" class="icon in">+</a>
                         <a href="#" class="icon out">-</a>
+                        <div id="currentZoomMarker" data-zoomfactor="0.5">
+                            <span>30</span>
+                            <span>40</span>
+                            <span class="active">50</span>
+                            <span>65</span>
+                            <span>80</span>
+                        </div>
                     </nav>
                 </div><!-- /.stage.right -->
             </div><!-- /.theatre -->
@@ -68,8 +78,8 @@
 
         <p>TODO:</p>
         <ul>
-            <li>Stars background is shamelessly stolen because I suck at photoshop.</li>
             <li>need something to show owner without cluttering or too many numbers</li>
+            <li>tooltip with infos</li>
         </ul>
 
 <!-- bo Asynchronuous Javascripts ================================================================================== -->
