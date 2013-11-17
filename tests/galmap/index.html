@@ -20,7 +20,7 @@
             <li>check for collision with edges - map can not be dragged too far</li>
             <li>stars can be interacted with. at the moment, click on a star just outputs debug info to console since this is just a test. exact integration of map tbd.</li>
             <li>Map can be zoomed. Variable number of zoom levels available. Since we do not scale the map but rather redraw it, the position of the central tile is remembered and the square centered after "zooming".</li>
-            <l>Starting Zoom Level comes from JSON (user can set default zoom)</l>
+            <li>Zoom level is saved via localStorage</li>
         </ul>
 
         <section class="map galactic clearfix">
@@ -43,6 +43,12 @@
                     <p><a href="" class="action button refresh">Try Again</a></p>
                 </div><!-- /.dialog.jsonfail -->
             </div><!-- /.overlay.jsonfail -->
+            <div class="dialog starinfo">
+                <header>
+                    <h1>Star System ID: <span class="id"></span></h1>
+
+                </header>
+            </div><!-- /.dialog.starinfo -->
             <div class="hiddenImages">
                 <img src="../../public/images/galmap/stars.png" id="spriteStars" />
             </div><!-- /.image.preloader -->
@@ -63,10 +69,10 @@
                     </div>
                     <nav role="navigation" class="zoom clearfix">
                         <div id="currentZoomMarker">
-                            <span>20</span><span>35</span><span>50</span><span>65</span><span>80</span>
-                        </div>
-                        <a href="#" class="icon out">-</a>
+                            <span>80</span><span>65</span><span>50</span><span>35</span><span>20</span>
+                        </div><!-- /#currentZoomMarker -->
                         <a href="#" class="icon in">+</a>
+                        <a href="#" class="icon out">-</a>
                     </nav>
                 </div><!-- /.stage.right -->
             </div><!-- /.theatre -->
@@ -76,7 +82,7 @@
         <p>TODO:</p>
         <ul>
             <li>need something to show owner without cluttering or too many numbers</li>
-            <li>tooltip with infos</li>
+            <li>click on star - info window</li>
         </ul>
 
 <!-- bo Asynchronuous Javascripts ================================================================================== -->

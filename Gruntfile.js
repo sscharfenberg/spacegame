@@ -19,6 +19,13 @@ module.exports = function (grunt) {
                 options: {
                     spawn               : true
                 }
+            },
+            images: {
+                files                   : "public/images/**/*",
+                tasks                   : ["compass:dev", "usebanner:css"],
+                options: {
+                    spawn               : true
+                }
             }
         },
 
