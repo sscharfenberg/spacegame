@@ -1,9 +1,769 @@
 /*!***************************************************************************************
 ** Project: game v0.0.1 - turn-based space game 
 ** Author: Sven Scharfenberg (sven.scharfenberg@projektvier.de) 
-** Last Changes: 17.11.2013 21:11 
+** Last Changes: 17.11.2013 21:16 
 ** Homepage: tbd 
 ** License: GNU General Public License 3.0 (http://www.gnu.org/licenses/gpl-3.0.en.html) 
 *****************************************************************************************/
 
-/*! normalize.css v2.1.3 | MIT License | git.io/normalize */article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}audio,canvas,video{display:inline-block}audio:not([controls]){display:none;height:0}[hidden],template{display:none}html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}a{background:transparent}a:focus{outline:thin dotted}a:active,a:hover{outline:0}h1{font-size:2em;margin:0.67em 0}abbr[title]{border-bottom:1px dotted}b,strong{font-weight:bold}dfn{font-style:italic}hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}mark{background:#ff0;color:#000}code,kbd,pre,samp{font-family:monospace, serif;font-size:1em}pre{white-space:pre-wrap}q{quotes:"\201C" "\201D" "\2018" "\2019"}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}img{border:0}svg:not(:root){overflow:hidden}figure{margin:0}fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em}legend{border:0;padding:0}button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}button,input{line-height:normal}button,select{text-transform:none}button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}button[disabled],html input[disabled]{cursor:default}input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}textarea{overflow:auto;vertical-align:top}table{border-collapse:collapse;border-spacing:0}@font-face{font-family:"Glyphicons Regular";src:url('../fonts/glyphicons-regular.eot');src:url('../fonts/glyphicons-regular.eot?#iefix') format('embedded-opentype'),url('../fonts/glyphicons-regular.woff') format('woff'), url('../fonts/glyphicons-regular.ttf') format('truetype'), url('../fonts/glyphcions-regular.svg#glyphiconsregular') format('svg');font-weight:normal;font-style:normal}.glyphicons{display:inline-block;position:relative;padding-left:48px;color:#1d1d1b;text-decoration:none;*display:inline;*zoom:1;vertical-align:middle}.glyphicons:before{position:absolute;left:0;top:0;display:inline-block;margin:0 5px 0 0;font:24px/1em 'Glyphicons Regular';font-style:normal;font-weight:normal;color:#1d1d1b;*display:inline;*zoom:1;vertical-align:middle;text-transform:none;-webkit-font-smoothing:antialiased}.glyphicons.white:before{color:#fff}html body{font:"Helvetica Neue", Helvetica, Arial, sans-serif;margin:0 auto;padding:5%;max-width:1000px}::-moz-selection{background:#b3d4fc;text-shadow:none}::selection{background:#b3d4fc;text-shadow:none}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}audio,canvas,img,video{vertical-align:middle}fieldset{border:0;margin:0;padding:0}textarea{resize:vertical}.ir{background-color:transparent;border:0;overflow:hidden;*text-indent:-9999px}.ir:before{content:"";display:block;width:0;height:150%}.hidden{display:none !important;visibility:hidden}.visuallyhidden{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus{clip:auto;height:auto;margin:0;overflow:visible;position:static;width:auto}.invisible{visibility:hidden}.clearfix{*zoom:1}.clearfix:before{content:" ";display:table}.clearfix:after{content:" ";display:table;clear:both}.overlay{position:absolute;z-index:10;left:0;right:0;top:0;bottom:0;background:rgba(0,0,0,0.8);display:none}.dialog.loading{width:40%;height:20%;margin:40% auto 0 auto;-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;padding:1%;-webkit-box-sizing:border-box;moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;text-align:center;background:#fff}.dialog.loading header h1,.dialog.loading p{font-size:12px;text-shadow:1px 1px 1px #888;margin:1% 0 0 0}.dialog.loading p{text-shadow:none}.dialog.loading .animation{width:50px;height:39px;margin:5% auto 0 auto;background-image:url('../images/loading.gif?1383956672')}@media print, (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi){.dialog.loading .animation{background-image:url('../images/loading@2x.gif?1383955612');background-size:50px 39px}}.dialog.jsonfail{width:60%;height:30%;margin:35% auto 0 auto;-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;padding:1%;-webkit-box-sizing:border-box;moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;text-align:center;background:#fff}.dialog.jsonfail header h1,.dialog.jsonfail p{font-size:14px;text-shadow:1px 1px 1px #888;margin:1% 0 5% 0}.dialog.jsonfail p{font-size:12px;text-shadow:none}.dialog.starinfo{display:none;width:40%;height:40%;background:#fff;-webkit-border-radius:5px;-moz-border-radius:5px;-ms-border-radius:5px;-o-border-radius:5px;border-radius:5px;position:absolute;z-index:10;top:30%;left:30%}.dialog.starinfo header h1,.dialog.starinfo p{font-size:14px;text-shadow:1px 1px 1px #888;margin:1% 0 5% 0}.map.galactic{position:relative;width:100%;max-width:600px;min-width:300px;background:#eee;padding:2%}.map.galactic .hiddenImages{display:none}.map.galactic #mapViewPort{overflow:hidden;position:relative;width:100%;height:100px;background:#000;z-index:2}.map.galactic #mapViewPort:hover{cursor:move}.map.galactic #mapViewPort #mapCanvas{z-index:1;position:relative;background:url('../images/galmap/background.map.stars.jpg?1384687483') repeat;background-size:402px 402px}.map.galactic #viewPortRulerHorz{overflow:hidden;position:relative;width:100%;height:25px;margin-bottom:5px;background:#000;border-top-right-radius:5px}.map.galactic #viewPortRulerHorz #rulerHorzCanvas{z-index:1;position:relative}.map.galactic #viewPortRulerHorz #rulerHorzCanvas:hover{cursor:e-resize}.map.galactic #viewPortRulerVert{overflow:hidden;position:relative;width:25px;height:100px;background:#000;border-bottom-left-radius:5px}.map.galactic #viewPortRulerVert #rulerVertCanvas{z-index:1;position:relative}.map.galactic #viewPortRulerVert #rulerVertCanvas:hover{cursor:n-resize}.map.galactic .mapbutton.focushome{width:25px;height:25px;display:inline-block;position:relative;margin-bottom:5px;vertical-align:middle;text-indent:-1000em;background:#000;border-top-left-radius:5px}.map.galactic .mapbutton.focushome:before{position:absolute;left:6px;top:6px;display:inline-block;content:"\E021";text-indent:0;margin:0;padding:0;font:13px/13px 'Glyphicons Regular';color:#fff;vertical-align:middle;text-transform:none;-webkit-font-smoothing:antialiased;-webkit-transition:all 500ms ease;-moz-transition:all 500ms ease;-o-transition:all 500ms ease;transition:all 500ms ease}.map.galactic .mapbutton.focushome:hover:before{color:#99ccff;-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}.map.galactic .theatre{position:relative;width:100%}.map.galactic .theatre .stage.left{float:left;width:25px;margin-right:5px}.map.galactic .theatre .stage.right{margin-left:30px}.map.galactic .theatre .zoom{position:absolute;bottom:0;right:0;z-index:5;list-style-type:none;margin:0;padding:0;width:53px}.map.galactic .theatre .zoom .icon{display:block;position:relative;float:left;margin-right:5px;vertical-align:middle;text-indent:-1000em;width:30px;height:30px;margin-bottom:5px;background:rgba(255,255,255,0.7);-webkit-transition:all 500ms ease;-moz-transition:all 500ms ease;-o-transition:all 500ms ease;transition:all 500ms ease;-webkit-border-radius:2px;-moz-border-radius:2px;-ms-border-radius:2px;-o-border-radius:2px;border-radius:2px;box-shadow:1px 1px 5px rgba(0,0,0,0.8)}.map.galactic .theatre .zoom .icon:before{position:absolute;left:4px;top:5px;display:inline-block;text-indent:0;margin:0;padding:0;font:20px/20px 'Glyphicons Regular';color:#333;vertical-align:middle;text-transform:none;-webkit-font-smoothing:antialiased;-webkit-transition:all 500ms ease;-moz-transition:all 500ms ease;-o-transition:all 500ms ease;transition:all 500ms ease}.map.galactic .theatre .zoom .icon.in:before{content:"\E237"}.map.galactic .theatre .zoom .icon.out:before{content:"\E238"}.map.galactic .theatre .zoom .icon:hover{background:#fff}.map.galactic .theatre .zoom .icon:hover:before{color:#000}.map.galactic .theatre .zoom .icon.disabled{background:rgba(221,221,221,0.5);cursor:not-allowed}.map.galactic .theatre .zoom .icon.disabled:hover:before{color:#333}.map.galactic .theatre .zoom #currentZoomMarker{width:13px;height:55px;margin-right:5px;float:right;background:rgba(255,255,255,0.7);-webkit-border-radius:2px;-moz-border-radius:2px;-ms-border-radius:2px;-o-border-radius:2px;border-radius:2px;-webkit-transition:all 500ms ease;-moz-transition:all 500ms ease;-o-transition:all 500ms ease;transition:all 500ms ease;box-shadow:1px 1px 5px rgba(0,0,0,0.8);padding:5px 0}.map.galactic .theatre .zoom #currentZoomMarker span{text-indent:-1000em;display:block;height:12px;width:13px;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAA3CAMAAAAlpqoUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAlQTFRFMzMz////WlpaXHIyZQAAAAJ0Uk5T/wDltzBKAAAAOUlEQVR42mJgBAMGRiTAgEwxMTDhkGJiYECWQ5ZiAAGSdeGxC58LB7/UaBiOhuFoGI6GIa3DECDAAPsjBSnugHiGAAAAAElFTkSuQmCC') -13px 0 no-repeat}.map.galactic .theatre .zoom #currentZoomMarker span:first-child{height:7px}.map.galactic .theatre .zoom #currentZoomMarker span.active{background-position:0 -7px}.map.galactic .theatre .zoom #currentZoomMarker span.active:first-child{background-position:0 0}
+/*! normalize.css v2.1.3 | MIT License | git.io/normalize */
+/* line 20, ../scss/vendor/_normalize.scss */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+/* line 28, ../scss/vendor/_normalize.scss */
+audio,
+canvas,
+video {
+  display: inline-block;
+}
+
+/* line 35, ../scss/vendor/_normalize.scss */
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/* line 44, ../scss/vendor/_normalize.scss */
+[hidden],
+template {
+  display: none;
+}
+
+/* line 55, ../scss/vendor/_normalize.scss */
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* line 63, ../scss/vendor/_normalize.scss */
+body {
+  margin: 0;
+}
+
+/* line 72, ../scss/vendor/_normalize.scss */
+a {
+  background: transparent;
+}
+
+/* line 78, ../scss/vendor/_normalize.scss */
+a:focus {
+  outline: thin dotted;
+}
+
+/* line 85, ../scss/vendor/_normalize.scss */
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/* line 95, ../scss/vendor/_normalize.scss */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* line 102, ../scss/vendor/_normalize.scss */
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/* line 109, ../scss/vendor/_normalize.scss */
+b,
+strong {
+  font-weight: bold;
+}
+
+/* line 115, ../scss/vendor/_normalize.scss */
+dfn {
+  font-style: italic;
+}
+
+/* line 121, ../scss/vendor/_normalize.scss */
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+/* line 129, ../scss/vendor/_normalize.scss */
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/* line 139, ../scss/vendor/_normalize.scss */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  font-size: 1em;
+}
+
+/* line 146, ../scss/vendor/_normalize.scss */
+pre {
+  white-space: pre-wrap;
+}
+
+/* line 152, ../scss/vendor/_normalize.scss */
+q {
+  quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+/* line 158, ../scss/vendor/_normalize.scss */
+small {
+  font-size: 80%;
+}
+
+/* line 165, ../scss/vendor/_normalize.scss */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 171, ../scss/vendor/_normalize.scss */
+sup {
+  top: -0.5em;
+}
+
+/* line 174, ../scss/vendor/_normalize.scss */
+sub {
+  bottom: -0.25em;
+}
+
+/* line 183, ../scss/vendor/_normalize.scss */
+img {
+  border: 0;
+}
+
+/* line 189, ../scss/vendor/_normalize.scss */
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* line 198, ../scss/vendor/_normalize.scss */
+figure {
+  margin: 0;
+}
+
+/* line 207, ../scss/vendor/_normalize.scss */
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+
+/* line 216, ../scss/vendor/_normalize.scss */
+legend {
+  border: 0;
+  padding: 0;
+}
+
+/* line 228, ../scss/vendor/_normalize.scss */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  margin: 0;
+}
+
+/* line 238, ../scss/vendor/_normalize.scss */
+button,
+input {
+  line-height: normal;
+}
+
+/* line 248, ../scss/vendor/_normalize.scss */
+button,
+select {
+  text-transform: none;
+}
+
+/* line 261, ../scss/vendor/_normalize.scss */
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+/* line 269, ../scss/vendor/_normalize.scss */
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+
+/* line 277, ../scss/vendor/_normalize.scss */
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* line 286, ../scss/vendor/_normalize.scss */
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+/* line 297, ../scss/vendor/_normalize.scss */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* line 304, ../scss/vendor/_normalize.scss */
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* line 312, ../scss/vendor/_normalize.scss */
+textarea {
+  overflow: auto;
+  /* 1 */
+  vertical-align: top;
+  /* 2 */
+}
+
+/* line 322, ../scss/vendor/_normalize.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+@font-face {
+  font-family: "Glyphicons Regular";
+  src: url('../fonts/glyphicons-regular.eot');
+  src: url('../fonts/glyphicons-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-regular.woff') format('woff'), url('../fonts/glyphicons-regular.ttf') format('truetype'), url('../fonts/glyphcions-regular.svg#glyphiconsregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* line 21, ../scss/vendor/glyphicons/_glyphicons.scss */
+.glyphicons {
+  display: inline-block;
+  position: relative;
+  padding-left: 48px;
+  color: #1d1d1b;
+  text-decoration: none;
+  *display: inline;
+  *zoom: 1;
+  vertical-align: middle;
+}
+/* line 30, ../scss/vendor/glyphicons/_glyphicons.scss */
+.glyphicons:before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  margin: 0 5px 0 0;
+  font: 24px/1em 'Glyphicons Regular';
+  font-style: normal;
+  font-weight: normal;
+  color: #1d1d1b;
+  *display: inline;
+  *zoom: 1;
+  vertical-align: middle;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+}
+/* line 46, ../scss/vendor/glyphicons/_glyphicons.scss */
+.glyphicons.white:before {
+  color: #fff;
+}
+
+/* line 7, ../scss/partials/_globals.scss */
+html body {
+  font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0 auto;
+  padding: 5%;
+  max-width: 1000px;
+}
+
+/* line 21, ../scss/partials/_globals.scss */
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+/* line 25, ../scss/partials/_globals.scss */
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+/* line 32, ../scss/partials/_globals.scss */
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/* line 47, ../scss/partials/_globals.scss */
+audio,
+canvas,
+img,
+video {
+  vertical-align: middle;
+}
+
+/* line 53, ../scss/partials/_globals.scss */
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 61, ../scss/partials/_globals.scss */
+textarea {
+  resize: vertical;
+}
+
+/* line 71, ../scss/partials/_globals.scss */
+.ir {
+  background-color: transparent;
+  border: 0;
+  overflow: hidden;
+  *text-indent: -9999px;
+  /* IE 6/7 fallback */
+}
+/* line 76, ../scss/partials/_globals.scss */
+.ir:before {
+  content: "";
+  display: block;
+  width: 0;
+  height: 150%;
+}
+
+/* line 86, ../scss/partials/_globals.scss */
+.hidden {
+  display: none !important;
+  visibility: hidden;
+}
+
+/* line 93, ../scss/partials/_globals.scss */
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+/* line 108, ../scss/partials/_globals.scss */
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+/* line 119, ../scss/partials/_globals.scss */
+.invisible {
+  visibility: hidden;
+}
+
+/* line 133, ../scss/partials/_globals.scss */
+.clearfix {
+  *zoom: 1;
+}
+/* line 135, ../scss/partials/_globals.scss */
+.clearfix:before {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+/* line 139, ../scss/partials/_globals.scss */
+.clearfix:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+  clear: both;
+}
+
+/* line 7, ../scss/partials/_dialogues.scss */
+.overlay {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+}
+
+/* line 19, ../scss/partials/_dialogues.scss */
+.dialog.loading {
+  width: 40%;
+  height: 20%;
+  margin: 40% auto 0 auto;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  padding: 1%;
+  -webkit-box-sizing: border-box;
+  moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  text-align: center;
+  background: #fff;
+}
+/* line 28, ../scss/partials/_dialogues.scss */
+.dialog.loading header h1, .dialog.loading p {
+  font-size: 12px;
+  text-shadow: 1px 1px 1px #888888;
+  margin: 1% 0 0 0;
+}
+/* line 33, ../scss/partials/_dialogues.scss */
+.dialog.loading p {
+  text-shadow: none;
+}
+/* line 36, ../scss/partials/_dialogues.scss */
+.dialog.loading .animation {
+  width: 50px;
+  height: 39px;
+  margin: 5% auto 0 auto;
+  background-image: url('../images/loading.gif?1383956672');
+}
+@media print, (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+  /* line 36, ../scss/partials/_dialogues.scss */
+  .dialog.loading .animation {
+    background-image: url('../images/loading@2x.gif?1383955612');
+    background-size: 50px 39px;
+  }
+}
+
+/* line 45, ../scss/partials/_dialogues.scss */
+.dialog.jsonfail {
+  width: 60%;
+  height: 30%;
+  margin: 35% auto 0 auto;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  padding: 1%;
+  -webkit-box-sizing: border-box;
+  moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  text-align: center;
+  background: #fff;
+}
+/* line 54, ../scss/partials/_dialogues.scss */
+.dialog.jsonfail header h1, .dialog.jsonfail p {
+  font-size: 14px;
+  text-shadow: 1px 1px 1px #888888;
+  margin: 1% 0 5% 0;
+}
+/* line 59, ../scss/partials/_dialogues.scss */
+.dialog.jsonfail p {
+  font-size: 12px;
+  text-shadow: none;
+}
+
+/* line 66, ../scss/partials/_dialogues.scss */
+.dialog.starinfo {
+  display: none;
+  width: 40%;
+  height: 40%;
+  background: #fff;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  position: absolute;
+  z-index: 10;
+  top: 30%;
+  left: 30%;
+}
+/* line 76, ../scss/partials/_dialogues.scss */
+.dialog.starinfo header h1, .dialog.starinfo p {
+  font-size: 14px;
+  text-shadow: 1px 1px 1px #888888;
+  margin: 1% 0 5% 0;
+}
+
+/* line 8, ../scss/partials/_galmap.scss */
+.map.galactic {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  min-width: 300px;
+  background: #eee;
+  padding: 2%;
+}
+/* line 15, ../scss/partials/_galmap.scss */
+.map.galactic .hiddenImages {
+  display: none;
+}
+/* line 20, ../scss/partials/_galmap.scss */
+.map.galactic #mapViewPort {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100px;
+  background: #000;
+  z-index: 2;
+}
+/* line 27, ../scss/partials/_galmap.scss */
+.map.galactic #mapViewPort:hover {
+  cursor: move;
+}
+/* line 30, ../scss/partials/_galmap.scss */
+.map.galactic #mapViewPort #mapCanvas {
+  z-index: 1;
+  position: relative;
+  background: url('../images/galmap/background.map.stars.jpg?1384687483') repeat;
+  background-size: 402px 402px;
+}
+/* line 39, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerHorz {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 25px;
+  margin-bottom: 5px;
+  background: #000;
+  border-top-right-radius: 5px;
+}
+/* line 47, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerHorz #rulerHorzCanvas {
+  z-index: 1;
+  position: relative;
+}
+/* line 50, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerHorz #rulerHorzCanvas:hover {
+  cursor: e-resize;
+}
+/* line 57, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerVert {
+  overflow: hidden;
+  position: relative;
+  width: 25px;
+  height: 100px;
+  background: #000;
+  border-bottom-left-radius: 5px;
+}
+/* line 64, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerVert #rulerVertCanvas {
+  z-index: 1;
+  position: relative;
+}
+/* line 67, ../scss/partials/_galmap.scss */
+.map.galactic #viewPortRulerVert #rulerVertCanvas:hover {
+  cursor: n-resize;
+}
+/* line 74, ../scss/partials/_galmap.scss */
+.map.galactic .mapbutton.focushome {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  position: relative;
+  margin-bottom: 5px;
+  vertical-align: middle;
+  text-indent: -1000em;
+  background: #000;
+  border-top-left-radius: 5px;
+}
+/* line 84, ../scss/partials/_galmap.scss */
+.map.galactic .mapbutton.focushome:before {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  display: inline-block;
+  content: "\E021";
+  text-indent: 0;
+  margin: 0;
+  padding: 0;
+  font: 13px/13px 'Glyphicons Regular';
+  color: #fff;
+  vertical-align: middle;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+/* line 100, ../scss/partials/_galmap.scss */
+.map.galactic .mapbutton.focushome:hover:before {
+  color: #99ccff;
+  -webkit-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -ms-transform: rotate(360deg);
+  -o-transform: rotate(360deg);
+  transform: rotate(360deg);
+}
+/* line 108, ../scss/partials/_galmap.scss */
+.map.galactic .theatre {
+  position: relative;
+  width: 100%;
+}
+/* line 111, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .stage.left {
+  float: left;
+  width: 25px;
+  margin-right: 5px;
+}
+/* line 116, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .stage.right {
+  margin-left: 30px;
+}
+/* line 122, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 5;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 53px;
+}
+/* line 131, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon {
+  display: block;
+  position: relative;
+  float: left;
+  margin-right: 5px;
+  vertical-align: middle;
+  text-indent: -1000em;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+}
+/* line 145, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon:before {
+  position: absolute;
+  left: 4px;
+  top: 5px;
+  display: inline-block;
+  text-indent: 0;
+  margin: 0;
+  padding: 0;
+  font: 20px/20px 'Glyphicons Regular';
+  color: #333;
+  vertical-align: middle;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+/* line 160, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon.in:before {
+  content: "\E237";
+}
+/* line 161, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon.out:before {
+  content: "\E238";
+}
+/* line 162, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon:hover {
+  background: white;
+}
+/* line 163, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon:hover:before {
+  color: #000;
+}
+/* line 164, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon.disabled {
+  background: rgba(221, 221, 221, 0.5);
+  cursor: not-allowed;
+}
+/* line 168, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom .icon.disabled:hover:before {
+  color: #333;
+}
+/* line 173, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom #currentZoomMarker {
+  width: 13px;
+  height: 55px;
+  margin-right: 5px;
+  float: right;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+  padding: 5px 0;
+}
+/* line 183, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom #currentZoomMarker span {
+  text-indent: -1000em;
+  display: block;
+  height: 12px;
+  width: 13px;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAA3CAMAAAAlpqoUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAlQTFRFMzMz////WlpaXHIyZQAAAAJ0Uk5T/wDltzBKAAAAOUlEQVR42mJgBAMGRiTAgEwxMTDhkGJiYECWQ5ZiAAGSdeGxC58LB7/UaBiOhuFoGI6GIa3DECDAAPsjBSnugHiGAAAAAElFTkSuQmCC') -13px 0 no-repeat;
+}
+/* line 189, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom #currentZoomMarker span:first-child {
+  height: 7px;
+}
+/* line 192, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom #currentZoomMarker span.active {
+  background-position: 0 -7px;
+}
+/* line 194, ../scss/partials/_galmap.scss */
+.map.galactic .theatre .zoom #currentZoomMarker span.active:first-child {
+  background-position: 0 0;
+}
