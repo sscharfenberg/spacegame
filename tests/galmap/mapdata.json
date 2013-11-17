@@ -1,6 +1,7 @@
 {
     "settings": {
-        "size": 50
+        "size": 40,
+        "zoom": 3
     },
     "systems": [
         {

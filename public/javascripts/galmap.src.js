@@ -8,8 +8,10 @@
 window.galmap = window.galmap || {
 
     // important global vars ===========================================================================================
-    tilesize: 50, // size in pixels of a maptile. needed for pretty much everything.
-    mapdata: null, // the object that will later contain the JSON data; needed to redraw the map.
+    tilesize: 0,
+    // size in pixels of a maptile. needed for pretty much everything.
+    mapdata: null,
+    // the object that will later contain the JSON data; needed to redraw the map.
 
     // Initialize ======================================================================================================
     init: function () {
@@ -22,8 +24,8 @@ window.galmap = window.galmap || {
         }
 
         // define local and global jquery objects ----------------------------------------------------------------------
-        var $mapviewport = $("#mapViewPort");
-        var $rulervertviewport = $("#viewPortRulerVert");
+        var $mapviewport = $("#mapViewPort"),
+            $rulervertviewport = $("#viewPortRulerVert");
 
         // adjust height of map and vertical ruler to the same value as map width --------------------------------------
         // width has correct value from css, we can't do that with height
@@ -39,6 +41,11 @@ window.galmap = window.galmap || {
         mapdata.done(function (data) { // once the JSON promise is fulfilled, this function gets executed --------------
             game.log("Data recieved from JSON", data);
             galmap.mapdata = data; // save JSON data in global object
+            // galmap.mapdata.settings.zoom has the index of the zoomlevels array { 1,2,3,4,5 }.
+            // 3 is default (1-indexed because css)
+            galmap.tilesize = parseInt(
+                $("#currentZoomMarker span").eq(data.settings.zoom-1).addClass("active").text(),10
+            );
             galmap.drawMap(data);
             // now that the map is drawn, assign drag, focus and bindZoom events ---------------------------------------
             galmap.bindMapDragging();
@@ -67,9 +74,9 @@ window.galmap = window.galmap || {
     // Draw Map Main Function ==========================================================================================
     drawMap: function (map) {
 
-        var $galMapCanvas = $("#mapCanvas");
+        var $galMapCanvas = $("#mapCanvas"),
+            mapSquarePixels = galmap.tilesize * map.settings.size;
         // prepare canvas with correct width and height (html has default) ---------------------------------------------
-        var mapSquarePixels = galmap.tilesize * map.settings.size;
         $galMapCanvas.attr({ width: mapSquarePixels, height: mapSquarePixels });
 
         // clear stage (we need this for redrawing) --------------------------------------------------------------------
@@ -108,9 +115,9 @@ window.galmap = window.galmap || {
     // we get the mapsize on function call and return it back after the grid has been drawn.
     drawGrid: function () {
 
-        var $galMapCanvas = $("#mapCanvas");
-        var gridColor = "#1a1a1a";
-        var posX1, posX2, posY1, posY2 = 0;
+        var $galMapCanvas = $("#mapCanvas"),
+            gridColor = "#1a1a1a",
+            posX1, posX2, posY1, posY2 = 0;
 
         for (var i = 0; i < (galmap.mapdata.settings.size-1); i++) {
             // draw a vertical line ------------------------------------------------------------------------------------
@@ -148,15 +155,14 @@ window.galmap = window.galmap || {
     // drawRulers: draw the horizontal and vertical rulers =============================================================
     drawRulers: function () {
 
-        var $horzcanvas = $("#rulerHorzCanvas");
-        var $vertcanvas = $("#rulerVertCanvas");
-        var textColor = "#fff";
-        var gridColor = "#1a1a1a";
-        var posX, posY, posX1, posX2, posY1, posY2 = 0;
-        var coordText = null;
+        var $horzcanvas = $("#rulerHorzCanvas"),
+            $vertcanvas = $("#rulerVertCanvas"),
+            textColor = "#fff",
+            gridColor = "#1a1a1a",
+            mapSquarePixels = galmap.tilesize * galmap.mapdata.settings.size,
+            posX, posY, posX1, posX2, posY1, posY2, coordText;
 
         // prepare canvas with correct width and height (html has 2000) ------------------------------------------------
-        var mapSquarePixels = galmap.tilesize * galmap.mapdata.settings.size;
         $horzcanvas.attr({ width: mapSquarePixels }); // attr instead of width() so we don't scale but enlarge
         $vertcanvas.attr({ height: mapSquarePixels });
 
@@ -216,8 +222,8 @@ window.galmap = window.galmap || {
     // bind the refresh button that is shown when JSON fails ===========================================================
     bindRefreshButton: function () {
 
-        var $erroroverlay = $(".overlay.jsonfail");
-        var $refreshbutton = $erroroverlay.find("a.refresh");
+        var $erroroverlay = $(".overlay.jsonfail"),
+            $refreshbutton = $erroroverlay.find("a.refresh");
         game.log("refreshbutton",$refreshbutton);
         $(document).on("click",$refreshbutton,function(event){ // click on refresh button initializes the map again
             event.preventDefault();
@@ -233,37 +239,32 @@ window.galmap = window.galmap || {
     // check for collision with edges
     bindMapDragging: function () {
 
-        var $galMapCanvas = $("#mapCanvas");
-        var $viewport = $("#mapViewPort");
+        var $galMapCanvas = $("#mapCanvas"),
+            $viewport = $("#mapViewPort");
 
-        $galMapCanvas.draggable({
+        $galMapCanvas.drag(function (event, dd) {
             // for each pixel dragged ----------------------------------------------------------------------------------
-            drag: function (event, ui) {
-                var maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewport.width(),10);
-                var maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewport.height(), 10);
-                if (ui.position.top > 0) { // reached top edge
-                    ui.position.top = 0;
-                }
-                if (ui.position.top < -maxOffSetTop) { // reached bottom edge
-                    ui.position.top = -maxOffSetTop;
-                }
-                if (ui.position.left > 0) { // reached left edge
-                    ui.position.left = 0;
-                }
-                if (ui.position.left < -maxOffSetLeft) { // reached right edge
-                    ui.position.left = -maxOffSetLeft;
-                }
-                if ( (ui.position.top <= 0) && (ui.position.left <= 0) && (ui.position.left >= -maxOffSetLeft) && (ui.position.top >= -maxOffSetTop) ) {
-                    // if we have not reached any of the edges, update ruler position accordingly
-                    $("#rulerHorzCanvas").css("left", ui.position.left);
-                    $("#rulerVertCanvas").css("top", ui.position.top);
-                }
-            },
-            stop: function (event, ui) {
-                game.log("dragged map", "position - top: " + ui.position.top + ", left: " + ui.position.left +
-                    " // originalPosition - top: " + ui.originalPosition.top + ", left: " + ui.originalPosition.left);
+            var maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewport.width(),10),
+                maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewport.height(), 10);
+            if (dd.offsetY > 0) { // reached top edge
+                dd.offsetY = 0;
             }
+            if (dd.offsetY < -maxOffSetTop) { // reached bottom edge
+                dd.offsetY = -maxOffSetTop;
+            }
+            if (dd.offsetX > 0) { // reached left edge
+                dd.offsetX = 0;
+            }
+            if (dd.offsetX < -maxOffSetLeft) { // reached right edge
+                dd.offsetX = -maxOffSetLeft;
+            }
+            $(this).css({ top: dd.offsetY, left: dd.offsetX });
+            $("#rulerHorzCanvas").css("left", dd.offsetX);
+            $("#rulerVertCanvas").css("top", dd.offsetY);
 
+        }, { relative: true })
+        .drag("end", function () {
+            game.log("dragged map", "endposition - top: " + $(this).css("top") + ", left: " + $(this).css("left"));
         });
 
     }, // ==============================================================================================================
@@ -273,57 +274,47 @@ window.galmap = window.galmap || {
     // check for collision with edges
     bindRulerDragging: function () {
 
-        var $galMapCanvas = $("#mapCanvas");
-        var $viewport = $("#mapViewPort");
-        var $horzcanvas = $("#rulerHorzCanvas");
-        var $vertcanvas = $("#rulerVertCanvas");
-        var maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewport.width(), 10);
-        var maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewport.height(), 10);
+        var $galMapCanvas = $("#mapCanvas"),
+            $viewport = $("#mapViewPort"),
+            $horzcanvas = $("#rulerHorzCanvas"),
+            $vertcanvas = $("#rulerVertCanvas"),
+            maxOffSetLeft, maxOffSetTop;
 
         // horizontal ruler --------------------------------------------------------------------------------------------
-        $horzcanvas.draggable({
-            axis: "x",
+        $horzcanvas.drag(function (event, dd) {
+            maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewport.width(), 10);
+            maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewport.height(), 10);
             // for every pixel dragged, check if we have reached one of the edges --------------------------------------
-            drag: function (event, ui) {
-                if (ui.position.left > 0) { // reached left edge
-                    ui.position.left = 0;
-                }
-                if (ui.position.left < -maxOffSetLeft) { // reached right edge
-                    ui.position.left = -maxOffSetLeft;
-                }
-                if ( (ui.position.left <= 0) && (ui.position.left >= -maxOffSetLeft) ) {
-                    // no collision with edges, move map accordingly
-                    $galMapCanvas.css("left", ui.position.left);
-                }
-            },
-            stop: function (event, ui) {
-                game.log("dragged horizontal ruler", "position - top: " + ui.position.top +
-                ", left: " + ui.position.left + " // originalPosition - top: " + ui.originalPosition.top +
-                ", left: " + ui.originalPosition.left);
+            if (dd.offsetX > 0) { // reached left edge
+                dd.offsetX = 0;
             }
+            if (dd.offsetX < -maxOffSetLeft) { // reached right edge
+                dd.offsetX = -maxOffSetLeft;
+            }
+            $(this).css({ left: dd.offsetX });
+            $galMapCanvas.css("left", dd.offsetX);
+        }, { relative: true })
+        .drag("end", function () {
+            game.log(
+                "dragged horizontal ruler", "endposition - left: " + $horzcanvas.css("left")
+            );
         });
 
         // vertical ruler ----------------------------------------------------------------------------------------------
-        $vertcanvas.draggable({
-            axis: "y",
-            // for every pixel dragged, check if we have reached one of the edges --------------------------------------
-            drag: function (event, ui) {
-                if (ui.position.top > 0) { // reached top edge
-                    ui.position.top = 0;
-                }
-                if (ui.position.top < -maxOffSetTop) { // reached bottom edge
-                    ui.position.top = -maxOffSetTop;
-                }
-                if ( (ui.position.top <= 0) && (ui.position.top >= -maxOffSetTop) ) {
-                    // no collision with edges, move map accordingly
-                    $galMapCanvas.css("top", ui.position.top);
-                }
-            },
-            stop: function (event,ui) {
-                game.log("dragged vertical ruler", "position - top: " + ui.position.top +
-                    ", left: " + ui.position.left + " // originalPosition - top: " + ui.originalPosition.top +
-                    ", left: " + ui.originalPosition.left);
+        $vertcanvas.drag(function (event, dd) {
+            if (dd.offsetY > 0) { // reached top edge
+                dd.offsetY = 0;
             }
+            if (dd.offsetY < -maxOffSetTop) { // reached bottom edge
+                dd.offsetY = -maxOffSetTop;
+            }
+            $(this).css({ top: dd.offsetY });
+            $galMapCanvas.css("top", dd.offsetY);
+        }, { relative: true })
+        .drag("end", function () {
+            game.log(
+                "dragged vertical ruler", "endposition -  top: " + $vertcanvas.css("top")
+            );
         });
 
     }, // ==============================================================================================================
@@ -343,13 +334,13 @@ window.galmap = window.galmap || {
     // if flash has a value, the focussed tile is marked by flashing borders and changing opacity
     focusMap: function (coordX,coordY,type) {
 
-        var $viewPort = $("#mapViewPort");
-        var $galMapCanvas = $("#mapCanvas");
-        var offset = galmap.getOffSetFromCoords(coordX,coordY);
-        var animateToX = offset.x;
-        var animateToY = offset.y;
-        var maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewPort.width(), 10);
-        var maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewPort.height(), 10);
+        var $viewPort = $("#mapViewPort"),
+            $galMapCanvas = $("#mapCanvas"),
+            offset = galmap.getOffSetFromCoords(coordX,coordY),
+            animateToX = offset.x,
+            animateToY = offset.y,
+            maxOffSetLeft = parseInt($galMapCanvas.attr("width") - $viewPort.width(), 10),
+            maxOffSetTop = parseInt($galMapCanvas.attr("height") - $viewPort.height(), 10);
 
         // make sure that we do not move over the edges ----------------------------------------------------------------
         if (animateToX < -maxOffSetLeft) { animateToX = -maxOffSetTop; } // reached right edge
@@ -363,9 +354,9 @@ window.galmap = window.galmap || {
                 "moving map and rulers to",
                 "x: " + animateToX + ", y:" + animateToY + " (" + coordX + "," + coordY + ")"
             );
-            $("#rulerHorzCanvas").animate({ "left": animateToX}, 100); // move rulers along with map
-            $("#rulerVertCanvas").animate({ "top": animateToY}, 100);
-            $galMapCanvas.animate({ "left": animateToX, "top": animateToY }, 100, function () {
+            $("#rulerHorzCanvas").animate({ "left": animateToX}, 200); // move rulers along with map
+            $("#rulerVertCanvas").animate({ "top": animateToY}, 20);
+            $galMapCanvas.animate({ "left": animateToX, "top": animateToY }, 200, function () {
                 $galMapCanvas.removeLayerGroup("flashbg").removeLayerGroup("flashtile");
                 // draw the tile that we are focussing -----------------------------------------------------------------
                 var fillStyle = "#153b61",
@@ -425,73 +416,62 @@ window.galmap = window.galmap || {
     // bind zoom buttons ===============================================================================================
     bindZoom: function () {
 
-        $(".zoom a.icon").click( function (event) {
+        $(".zoom a.icon:not(.disabled)").click( function (event) {
             event.preventDefault();
-            if (!$(this).hasClass("disabled")) {
 
-                game.log("Zoom requested",0);
-                var $zoom = $("#currentZoomMarker");
-                // find coordinates ------------------------------------------------------------------------------------
-                var $galMapCanvas = $("#mapCanvas");
-                var position = $galMapCanvas.position();
-                var coords = galmap.getCoordsFromOffset(position.left, position.top);
-                var currentCoordX = coords.x;
-                var currentCoordY = coords.y;
-                game.log("Coordinates before bindZoom", "(" + currentCoordX + "," + currentCoordY + ")");
+            game.log("Zoom requested",0);
+            var $zoom = $("#currentZoomMarker"),
+                $galMapCanvas = $("#mapCanvas"),
+                position = $galMapCanvas.position(),
+                // find coordinates
+                coords = galmap.getCoordsFromOffset(position.left, position.top),
+                currentCoordX = coords.x,
+                currentCoordY = coords.y;
+            game.log("Coordinates before bindZoom", "(" + currentCoordX + "," + currentCoordY + ")");
 
-                // TODO: get coords before zooming, change position after zooming: bla, function () { ... });
-
-                // Zoom In ---------------------------------------------------------------------------------------------
-                if ($(this).hasClass("in")) {
-
-                    // check if we are zooming in from min zoom and enable zoom out button accordingly
-                    if ($zoom.find("span.active").prev("span").length === 0) {
-                        $(".icon.out").removeClass("disabled");
-                    }
-                    // check if there is a next zoomlevel and move class="active" one span forward
-                    if ($zoom.find("span.active").next("span").length > 0) {
-                        $zoom.find("span.active").removeClass("active")
-                            .next("span").addClass("active");
-                    }
-                    // check if we have arrived at max zoom and need to disable zoom in button
-                    if ($zoom.find("span.active").next("span").length === 0 ) {
-                        $(this).addClass("disabled");
-                    }
-
-                    galmap.tilesize = parseInt($zoom.find("span.active").text(),10);
-                    game.log("new tilesize", galmap.tilesize);
-                    galmap.drawMap(galmap.mapdata);
-                    galmap.focusMap(currentCoordX, currentCoordY);
-
+            // Zoom In -------------------------------------------------------------------------------------------------
+            if ($(this).hasClass("in")) {
+                // check if we are zooming in from min zoom and enable zoom out button accordingly
+                if ($zoom.find("span.active").prev("span").length === 0) {
+                    $(".icon.out").removeClass("disabled");
                 }
-
-                // Zoom Out --------------------------------------------------------------------------------------------
-                else if ($(this).hasClass("out")) {
-
-                    // check if we are zooming out from max zoom and enable zoom in button accordingly
-                    if ($zoom.find("span.active").next("span").length === 0) {
-                        $(".icon.in").removeClass("disabled");
-                    }
-                    // check if there is a prev zoomlevel and move class="active" one span backward
-                    if ($zoom.find("span.active").prev("span").length > 0) {
-                        $zoom.find("span.active").removeClass("active")
-                            .prev("span").addClass("active");
-                    }
-                    // check if we have arrived at max zoom and need to disable zoom in button
-                    if ($zoom.find("span.active").prev("span").length === 0) {
-                        $(this).addClass("disabled");
-                    }
-
-                    galmap.tilesize = parseInt($zoom.find("span.active").text(), 10);
-                    game.log("new tilesize", galmap.tilesize);
-                    galmap.drawMap(galmap.mapdata);
-                    galmap.focusMap(currentCoordX, currentCoordY);
-
+                // check if there is a next zoomlevel and move class="active" one span forward
+                if ($zoom.find("span.active").next("span").length > 0) {
+                    $zoom.find("span.active").removeClass("active")
+                        .next("span").addClass("active");
                 }
-
+                // check if we have arrived at max zoom and need to disable zoom in button
+                if ($zoom.find("span.active").next("span").length === 0 ) {
+                    $(this).addClass("disabled");
+                }
+                galmap.tilesize = parseInt($zoom.find("span.active").text(),10);
+                game.log("new tilesize", galmap.tilesize);
+                galmap.drawMap(galmap.mapdata);
+                galmap.focusMap(currentCoordX, currentCoordY);
             }
-        });
 
+            // Zoom Out ------------------------------------------------------------------------------------------------
+            else if ($(this).hasClass("out")) {
+                // check if we are zooming out from max zoom and enable zoom in button accordingly
+                if ($zoom.find("span.active").next("span").length === 0) {
+                    $(".icon.in").removeClass("disabled");
+                }
+                // check if there is a prev zoomlevel and move class="active" one span backward
+                if ($zoom.find("span.active").prev("span").length > 0) {
+                    $zoom.find("span.active").removeClass("active")
+                        .prev("span").addClass("active");
+                }
+                // check if we have arrived at max zoom and need to disable zoom in button
+                if ($zoom.find("span.active").prev("span").length === 0) {
+                    $(this).addClass("disabled");
+                }
+                galmap.tilesize = parseInt($zoom.find("span.active").text(), 10);
+                game.log("new tilesize", galmap.tilesize);
+                galmap.drawMap(galmap.mapdata);
+                galmap.focusMap(currentCoordX, currentCoordY);
+            }
+
+        });
 
     }, // ==============================================================================================================
 
@@ -499,29 +479,29 @@ window.galmap = window.galmap || {
     // leftOffSet = [canvas].position().left; topOffSet = [canvas].position().top
     getCoordsFromOffset: function (leftOffSet, topOffSet) {
 
-        var $galMapCanvas = $("#mapCanvas");
-        var $viewport = $("#mapViewPort");
+        var $galMapCanvas = $("#mapCanvas"),
+            $viewport = $("#mapViewPort"),
 
-        // number of squares from viewport left to center --------------------------------------------------------------
-        var coordsToViewPortCenter = Math.abs(
-            ( ($viewport.width() / $galMapCanvas.width()) * galmap.mapdata.settings.size) / 2
-        );
-        // number of squares of canvas scrolled to right ---------------------------------------------------------------
-        var coordX = parseInt(
-            (Math.ceil(
-                Math.abs(
-                    (leftOffSet / $galMapCanvas.width()) * galmap.mapdata.settings.size
-                ) + coordsToViewPortCenter) - 1
-            ), 10 // decimals for parsefloat
-        );
-        // number of squares of canvas scrolled to bottom --------------------------------------------------------------
-        var coordY = parseInt(
-            (Math.ceil(
-                Math.abs(
-                    (topOffSet / $galMapCanvas.height()) * galmap.mapdata.settings.size
-                ) + coordsToViewPortCenter) - 1
-            ), 10 // decimals for parsefloat
-        );
+            // number of squares from viewport left to center ----------------------------------------------------------
+            coordsToViewPortCenter = Math.abs(
+                ( ($viewport.width() / $galMapCanvas.width()) * galmap.mapdata.settings.size) / 2
+            ),
+            // number of squares of canvas scrolled to right -----------------------------------------------------------
+            coordX = parseInt(
+                (Math.ceil(
+                    Math.abs(
+                        (leftOffSet / $galMapCanvas.width()) * galmap.mapdata.settings.size
+                    ) + coordsToViewPortCenter) - 1
+                ), 10 // decimals for parsefloat
+            ),
+            // number of squares of canvas scrolled to bottom ----------------------------------------------------------
+            coordY = parseInt(
+                (Math.ceil(
+                    Math.abs(
+                        (topOffSet / $galMapCanvas.height()) * galmap.mapdata.settings.size
+                    ) + coordsToViewPortCenter) - 1
+                ), 10 // decimals for parsefloat
+            );
 
         return { x: coordX, y: coordY };
 
@@ -530,29 +510,33 @@ window.galmap = window.galmap || {
     // Get Canvas Offset from Coordinates ==============================================================================
     // centers on tile
     getOffSetFromCoords: function (coordX, coordY) {
-        var $viewport = $("#mapViewPort");
-        var fokusToX = Math.round($viewport.width() / 2); // half of stage
-        var fokusToY = Math.round($viewport.height() / 2);
-        var canvasX = Math.round(( (coordX + 1) * galmap.tilesize) - (galmap.tilesize / 2)); // +1 because coords start at 0
-        var canvasY = Math.round(( (coordY + 1) * galmap.tilesize) - (galmap.tilesize / 2));
-        var animateToX = fokusToX - canvasX;
-        var animateToY = fokusToY - canvasY;
+
+        var $viewport = $("#mapViewPort"),
+            fokusToX = Math.round($viewport.width() / 2), // half of stage
+            fokusToY = Math.round($viewport.height() / 2),
+            canvasX = Math.round(( (coordX + 1) * galmap.tilesize) - (galmap.tilesize / 2)),
+            canvasY = Math.round(( (coordY + 1) * galmap.tilesize) - (galmap.tilesize / 2)),
+            animateToX = fokusToX - canvasX,
+            animateToY = fokusToY - canvasY;
         return {
             x: animateToX,
             y: animateToY
         };
+
     }, // ==============================================================================================================
 
     // Draw a single system ============================================================================================
     drawSystem: function (id) {
 
-        var coordX = galmap.mapdata.systems[id].x;
-        var coordY = galmap.mapdata.systems[id].y;
-        var spriteSquarePixels = 120; // width of star sprite in stars.png
-        var canvasX = (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2);
-        var canvasY = (coordY * galmap.tilesize) + Math.round(galmap.tilesize / 2);
-        // default for pixelsize of images is 40; tilesize is 50. Make sure this scales correctly:
-        var imageSquarePixel = Math.round((galmap.tilesize * 4) / 5);
+        var coordX = galmap.mapdata.systems[id].x,
+            coordY = galmap.mapdata.systems[id].y,
+            $galMapCanvas = $("#mapCanvas"),
+            spriteSquarePixels = 64,
+            // width of star sprite in stars.png. Compass assigns background-size via image-width, so we can use it here
+            canvasX = (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+            canvasY = (coordY * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+            imageSquarePixel = Math.round((galmap.tilesize * 4) / 5);
+            // ratio for pixelsize of images is 4/5 of tilesize. Make sure this scales correctly:
 
         game.log(
             "drawing system",
@@ -561,7 +545,7 @@ window.galmap = window.galmap || {
             coordY + "(" + canvasY + ")"
         );
 
-        $("#mapCanvas").drawImage({
+        $galMapCanvas.drawImage({
             source          : $("#spriteStars").attr("src"),
             sWidth          : spriteSquarePixels, // width of cropped sprite
             sHeight         : spriteSquarePixels, // height of cropped sprite
@@ -598,12 +582,12 @@ window.galmap = window.galmap || {
     // from and to are the IDs of the systems that are linked
     drawWormHole: function (from,to) {
 
-        var wormHoleColor = "#9cf";
-        var fromX = (galmap.mapdata.systems[from].x * galmap.tilesize) + (galmap.tilesize / 2);
-        var fromY = (galmap.mapdata.systems[from].y * galmap.tilesize) + (galmap.tilesize / 2);
-        var toX = (galmap.mapdata.systems[to].x * galmap.tilesize) + (galmap.tilesize / 2);
-        var toY = (galmap.mapdata.systems[to].y * galmap.tilesize) + (galmap.tilesize / 2);
-        var strokeWidth = 1;
+        var wormHoleColor = "#9cf",
+            fromX = (galmap.mapdata.systems[from].x * galmap.tilesize) + (galmap.tilesize / 2),
+            fromY = (galmap.mapdata.systems[from].y * galmap.tilesize) + (galmap.tilesize / 2),
+            toX = (galmap.mapdata.systems[to].x * galmap.tilesize) + (galmap.tilesize / 2),
+            toY = (galmap.mapdata.systems[to].y * galmap.tilesize) + (galmap.tilesize / 2);
+            strokeWidth = 1;
         if (galmap.bindZoom > 1) { strokeWidth = 2; }
 
         game.log(
@@ -612,20 +596,19 @@ window.galmap = window.galmap || {
         );
 
         $("#mapCanvas").drawLine({
-            layer: true,
-            groups: ["wormholes"],
-            strokeStyle: wormHoleColor,
-            strokeWidth: strokeWidth,
-            x1: fromX,
-            y1: fromY,
-            x2: toX,
-            y2: toY
+            layer       : true,
+            groups      : ["wormholes"],
+            strokeStyle : wormHoleColor,
+            strokeWidth : strokeWidth,
+            x1          : fromX,
+            y1          : fromY,
+            x2          : toX,
+            y2          : toY
         });
 
     } // ===============================================================================================================
 
 };
-
+//
 galmap.init();
-
 //

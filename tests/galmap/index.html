@@ -20,6 +20,7 @@
             <li>check for collision with edges - map can not be dragged too far</li>
             <li>stars can be interacted with. at the moment, click on a star just outputs debug info to console since this is just a test. exact integration of map tbd.</li>
             <li>Map can be zoomed. Variable number of zoom levels available. Since we do not scale the map but rather redraw it, the position of the central tile is remembered and the square centered after "zooming".</li>
+            <l>Starting Zoom Level comes from JSON (user can set default zoom)</l>
         </ul>
 
         <section class="map galactic clearfix">
@@ -43,7 +44,7 @@
                 </div><!-- /.dialog.jsonfail -->
             </div><!-- /.overlay.jsonfail -->
             <div class="hiddenImages">
-                <img src="../../public/images/stars.png" id="spriteStars" />
+                <img src="../../public/images/galmap/stars.png" id="spriteStars" />
             </div><!-- /.image.preloader -->
 
             <div class="theatre clearfix">
@@ -61,15 +62,11 @@
                         <canvas id="mapCanvas" width="2000" height="2000"></canvas><!-- TODO: remove width/height attributes -->
                     </div>
                     <nav role="navigation" class="zoom clearfix">
-                        <a href="#" class="icon in">+</a>
-                        <a href="#" class="icon out">-</a>
-                        <div id="currentZoomMarker" data-zoomfactor="0.5">
-                            <span>30</span>
-                            <span>40</span>
-                            <span class="active">50</span>
-                            <span>65</span>
-                            <span>80</span>
+                        <div id="currentZoomMarker">
+                            <span>20</span><span>35</span><span>50</span><span>65</span><span>80</span>
                         </div>
+                        <a href="#" class="icon out">-</a>
+                        <a href="#" class="icon in">+</a>
                     </nav>
                 </div><!-- /.stage.right -->
             </div><!-- /.theatre -->
@@ -86,7 +83,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="../../public/javascripts/vendor/jquery/jquery-2.0.3.min.js"><\/script>')</script>
         <script src="../../public/javascripts/vendor/jquery/jcanvas/jcanvas.min.js"></script>
-        <script src="../../public/javascripts/vendor/jquery/ui/jquery-ui-1.10.3.custom.min.js"></script>
+        <script src="../../public/javascripts/vendor/jquery/jquery.event.drag/jquery.event.drag-2.2.min.js"></script>
         <script src="../../public/javascripts/game.src.js"></script>
         <script src="../../public/javascripts/galmap.src.js"></script>
 <!-- eo Asynchronuous Javascripts ================================================================================== -->
