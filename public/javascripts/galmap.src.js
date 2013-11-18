@@ -144,7 +144,6 @@ window.galmap = window.galmap || {
 
 
     // Draw a background grid to make coordinates more accessible ======================================================
-    // we get the mapsize on function call and return it back after the grid has been drawn.
     drawGrid: function () {
 
         var $galMapCanvas = $("#mapCanvas"),
@@ -152,9 +151,7 @@ window.galmap = window.galmap || {
             strokeWidth = 2,
             posX1, posX2, posY1, posY2;
 
-        if (galmap.tilesize < 50) {
-            strokeWidth = 1;
-        }
+        if (galmap.tilesize < 50) { strokeWidth = 1; } // smaller grid for small tilesizes
 
 
         for (var i = 0; i < (galmap.mapdata.settings.size-1); i++) {
@@ -164,8 +161,14 @@ window.galmap = window.galmap || {
             posY1 = 0;
             posY2 = $galMapCanvas.height();
             $galMapCanvas.drawLine({
-                layer: true, groups: ["grid"], strokeStyle: gridColor, strokeWidth: strokeWidth,
-                x1: posX1, y1: posY1, x2: posX2, y2: posY2
+                layer       : true,
+                groups      : "grid",
+                strokeStyle : gridColor,
+                strokeWidth : strokeWidth,
+                x1          : posX1,
+                y1          : posY1,
+                x2          : posX2,
+                y2          : posY2
             });
             // draw a horizontal line ----------------------------------------------------------------------------------
             posX1 = 0;
@@ -173,8 +176,14 @@ window.galmap = window.galmap || {
             posY1 = (galmap.tilesize * i) + galmap.tilesize;
             posY2 = (galmap.tilesize * i) + galmap.tilesize;
             $galMapCanvas.drawLine({
-                layer: true, groups: ["grid"], strokeStyle: gridColor, strokeWidth: strokeWidth,
-                x1: posX1, y1: posY1, x2: posX2, y2: posY2
+                layer       : true,
+                group       : "grid",
+                strokeStyle : gridColor,
+                strokeWidth : strokeWidth,
+                x1          : posX1,
+                y1          : posY1,
+                x2          : posX2,
+                y2          : posY2
             });
         }
 
@@ -614,11 +623,13 @@ window.galmap = window.galmap || {
             coordY = galmap.mapdata.systems[id].y,
             $galMapCanvas = $("#mapCanvas"),
             spriteSquarePixels = 64,
-            // width of star sprite in stars.png. Compass assigns background-size via image-width, so we can use it here
+        // width of star sprite in stars.png. Compass assigns background-size via image-width, so we can use it here
             canvasX = (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
             canvasY = (coordY * galmap.tilesize) + Math.round(galmap.tilesize / 2),
-            imageSquarePixel = Math.round((galmap.tilesize * 4) / 5);
-            // ratio for pixelsize of images is 4/5 of tilesize. Make sure this scales correctly:
+        // ratio for pixelsize of images is 4/5 of tilesize. Make sure this scales correctly
+            imageSquarePixel = Math.round((galmap.tilesize * 4) / 5),
+            tickerTextSize = "10pt",
+            tickerTextColor = "#fff";
 
         utils.log(
             "drawing system - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner + ", spectral: " +
@@ -635,8 +646,8 @@ window.galmap = window.galmap || {
             cropFromCenter  : false,
             layer           : true,
             clickable       : true,
-            name            : "system-"+id,
-            groups          : ["systems"],
+            name            : "system-"+id+"planet",
+            group           : "system-"+id,
             x               : canvasX,
             y               : canvasY,
             width           : imageSquarePixel,
@@ -646,11 +657,38 @@ window.galmap = window.galmap || {
             mouseout: function () { $(this).css("cursor", "move"); },
             click: function () {
                 utils.log( // this is temporary of course, pending further game specification
-                    "clicked on star - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner +
+                    "clicked on star - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner.id +
                         ", spectral: " + galmap.mapdata.systems[id].spectral
                 );
             }
         });
+
+        if ((galmap.tilesize >= 50) && (galmap.tilesize < 65)) { tickerTextSize = "9pt"; }
+        if ( (galmap.tilesize >= 35) && (galmap.tilesize < 50) ) { tickerTextSize = "7pt"; }
+        if ((galmap.tilesize >= 20) && (galmap.tilesize < 35)) { tickerTextSize = "6pt"; }
+
+        if (galmap.mapdata.systems[id].owner.id !== 0) {
+            $galMapCanvas.drawText({
+                layer: true,
+                name: "system-" + id + "owner",
+                group: "system-" + id,
+                fontSize: tickerTextSize,
+                fontFamily: "Arial",
+                fillStyle: tickerTextColor,
+                x: (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+                y: (coordY * galmap.tilesize),
+                fromCenter: true,
+                text: "["+galmap.mapdata.systems[id].owner.ticker+"]",
+                mouseover: function () { $galMapCanvas.css("cursor", "pointer"); },
+                mouseout: function () { $(this).css("cursor", "move"); },
+                click: function () {
+                    utils.log( // this is temporary of course, pending further game specification
+                        "clicked on star owner - id: " + galmap.mapdata.systems[id].owner.id + ", owner: [" +
+                            galmap.mapdata.systems[id].owner.ticker + "]"
+                    );
+                }
+            });
+        }
 
     }, // ==============================================================================================================
 
@@ -658,13 +696,14 @@ window.galmap = window.galmap || {
     // from and to are the IDs of the systems that are linked
     drawWormHole: function (from,to) {
 
-        var wormHoleColor = "#9cf",
+        var wormHoleColor = "#6e93b8",
             fromX = (galmap.mapdata.systems[from].x * galmap.tilesize) + (galmap.tilesize / 2),
             fromY = (galmap.mapdata.systems[from].y * galmap.tilesize) + (galmap.tilesize / 2),
             toX = (galmap.mapdata.systems[to].x * galmap.tilesize) + (galmap.tilesize / 2),
             toY = (galmap.mapdata.systems[to].y * galmap.tilesize) + (galmap.tilesize / 2);
             strokeWidth = 1;
-        if (galmap.tilesize > 50) { strokeWidth = 2; }
+        if (galmap.tilesize >= 50) { strokeWidth = 2; }
+        if (galmap.tilesize >= 65) { strokeWidth = 3; }
 
         utils.log(
             "drawing wormhole from #" + from + " (" + fromX + "," + fromY + ") to #" +
@@ -673,7 +712,7 @@ window.galmap = window.galmap || {
 
         $("#mapCanvas").drawLine({
             layer       : true,
-            groups      : ["wormholes"],
+            group       : "wormholes",
             strokeStyle : wormHoleColor,
             strokeWidth : strokeWidth,
             x1          : fromX,
