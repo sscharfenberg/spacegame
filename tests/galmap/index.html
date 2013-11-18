@@ -20,7 +20,7 @@
             <li>check for collision with edges - map can not be dragged too far</li>
             <li>stars can be interacted with. at the moment, click on a star just outputs debug info to console since this is just a test. exact integration of map tbd.</li>
             <li>Map can be zoomed. Variable number of zoom levels available. Since we do not scale the map but rather redraw it, the position of the central tile is remembered and the square centered after "zooming".</li>
-            <li>Zoom level is saved via localStorage</li>
+            <li>Zoom level and the focussed coordinates are saved via localStorage</li>
         </ul>
 
         <section class="map galactic clearfix">
@@ -57,12 +57,12 @@
                 <div class="stage left">
                     <a href="" class="mapbutton focushome">home</a>
                     <div id="viewPortRulerVert">
-                        <canvas id="rulerVertCanvas" width="25" height="2000"></canvas>
+                        <canvas id="rulerVertCanvas"></canvas>
                     </div>
                 </div><!-- /.stage.left -->
                 <div class="stage right">
                     <div id="viewPortRulerHorz">
-                        <canvas id="rulerHorzCanvas" width="2000" height="25"></canvas>
+                        <canvas id="rulerHorzCanvas"></canvas>
                     </div>
                     <div id="mapViewPort">
                         <canvas id="mapCanvas"></canvas><!-- TODO: remove width/height attributes -->
@@ -90,7 +90,7 @@
         <script>window.jQuery || document.write('<script src="../../public/javascripts/vendor/jquery/jquery-2.0.3.min.js"><\/script>')</script>
         <script src="../../public/javascripts/vendor/jquery/jcanvas/jcanvas.min.js"></script>
         <script src="../../public/javascripts/vendor/jquery/jquery.event.drag/jquery.event.drag-2.2.min.js"></script>
-        <script src="../../public/javascripts/game.src.js"></script>
+        <script src="../../public/javascripts/utils.src.js"></script>
         <script src="../../public/javascripts/galmap.src.js"></script>
 <!-- eo Asynchronuous Javascripts ================================================================================== -->
     </body>

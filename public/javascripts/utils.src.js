@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 //
 // setup namespace =====================================================================================================
-window.game = window.game || {
+window.utils = window.utils || {
 
     DEBUG: true,
 
@@ -15,19 +15,18 @@ window.game = window.game || {
 
     // Default Log Message used for debugging ==========================================================================
     // msg = the message that is printed in the console
-    // object = 0 by default if no variable or object needs to be printed to console
-    // otherwise, object is printed to console
-    log: function(msg,object) {
-        if ( (game.DEBUG) && (window.console.log) && (window.console.warn) && (window.console.error) ) {
+    log: function(msg, object) {
+        // if object exists, log object on seperate line
+        if ( (utils.DEBUG) && (window.console.log) && (object) ) {
             console.warn("DEBUG: " +msg);
-            if ( (object) && (object !== 0) ) {
-                console.log(object);
-            } else if (object !== 0) {
-                console.error(object);
-            }
+            console.log(object);
+        }
+        // if object does not exist, everything on one line
+        if ( (utils.DEBUG) && (window.console.log) && (!object) ) {
+            console.log("DEBUG: " + msg);
         }
     }
 
 };
 
-game.init();
+utils.init();

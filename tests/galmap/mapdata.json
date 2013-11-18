@@ -72,6 +72,20 @@
             "spectral": 9,
             "x": 14,
             "y": 15
+        },
+        {
+            "id": 10,
+            "owner": 0,
+            "spectral": 3,
+            "x": 34,
+            "y": 21
+        },
+        {
+            "id": 11,
+            "owner": 1,
+            "spectral": 9,
+            "x": 19,
+            "y": 31
         }
     ],
     "wormholes": [
