@@ -127,17 +127,13 @@ window.galmap = window.galmap || {
         // draw all wormholes from JSON --------------------------------------------------------------------------------
         utils.log("Number of Wormholes: " + map.wormholes.length);
         map.wormholes.forEach(function (wormhole) {
-            galmap.drawWormHole(
-                wormhole.from, wormhole.to
-            );
+            galmap.drawWormHole(wormhole.id, wormhole.from, wormhole.to);
         });
 
         // draw all planets from JSON ----------------------------------------------------------------------------------
         utils.log("Number of Systems: " + map.systems.length);
         map.systems.forEach(function(system){
-            galmap.drawSystem(
-                system.id
-            );
+            galmap.drawSystem(system.id);
         });
 
     }, // ==============================================================================================================
@@ -632,7 +628,7 @@ window.galmap = window.galmap || {
             tickerTextColor = "#fff";
 
         utils.log(
-            "drawing system - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner + ", spectral: " +
+            "drawing system - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner.ticker + ", spectral: " +
             galmap.mapdata.systems[id].spectral + ", x: " + coordX + "(" + canvasX + "), y: " +
             coordY + "(" + canvasY + ")"
         );
@@ -678,7 +674,7 @@ window.galmap = window.galmap || {
                 x: (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
                 y: (coordY * galmap.tilesize),
                 fromCenter: true,
-                text: "["+galmap.mapdata.systems[id].owner.ticker+"]",
+                text: "["+galmap.mapdata.systems[id].owner.ticker+"]", // TODO: Change data format in JSON so the ticker is seperate from systems
                 mouseover: function () { $galMapCanvas.css("cursor", "pointer"); },
                 mouseout: function () { $(this).css("cursor", "move"); },
                 click: function () {
@@ -694,31 +690,54 @@ window.galmap = window.galmap || {
 
     // Draw a wormhole (connection between two systems) ================================================================
     // from and to are the IDs of the systems that are linked
-    drawWormHole: function (from,to) {
+    drawWormHole: function (id,from,to) {
 
-        var wormHoleColor = "#6e93b8",
-            fromX = (galmap.mapdata.systems[from].x * galmap.tilesize) + (galmap.tilesize / 2),
-            fromY = (galmap.mapdata.systems[from].y * galmap.tilesize) + (galmap.tilesize / 2),
-            toX = (galmap.mapdata.systems[to].x * galmap.tilesize) + (galmap.tilesize / 2),
-            toY = (galmap.mapdata.systems[to].y * galmap.tilesize) + (galmap.tilesize / 2);
-            strokeWidth = 1;
-        if (galmap.tilesize >= 50) { strokeWidth = 2; }
-        if (galmap.tilesize >= 65) { strokeWidth = 3; }
+        var strokeWidth = 2, wormHoleColor = "#6e93b8", arrowRadius = 10, arrowAngle = 20;
+        // adjust size of arrows and lines for different zoom levels. this is only an approximation, not really exact.
+        if (galmap.tilesize >= 50) { strokeWidth = 3; }
+        if (galmap.tilesize >= 65) { strokeWidth = 4; }
+        if (galmap.tilesize <= 20) { strokeWidth = 1; arrowRadius = 4; }
+        if (galmap.tilesize > 20) { arrowRadius = 7; }
+        if (galmap.tilesize > 50) { arrowRadius = 13; }
+        if (galmap.tilesize > 65) { arrowRadius = 16; }
+
+
+        // get the point in the middle of the tile (origin of planet circle)
+        var fromCenterX = (galmap.mapdata.systems[from].x * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+            fromCenterY = (galmap.mapdata.systems[from].y * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+            toCenterX = (galmap.mapdata.systems[to].x * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+            toCenterY = (galmap.mapdata.systems[to].y * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+        // get the angle of the line between the two systems
+            deltaY = toCenterY - fromCenterY,
+            deltaX = toCenterX - fromCenterX,
+            theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI, // angle in degrees
+        // get the radius of the planets circle.
+            distanceFromCenter = Math.round((galmap.tilesize * 4) / 8),// = radius. we use a slightly bigger radius
+        // now find the coordinates of the point on the circle. these coordinates are relative to the circles center
+            startX = parseInt(Math.cos(theta * Math.PI / 180) * distanceFromCenter,10) + fromCenterX,
+            startY = parseInt(Math.sin(theta * Math.PI / 180) * distanceFromCenter,10) + fromCenterY,
+            endX = toCenterX - parseInt(Math.cos(theta * Math.PI / 180) * distanceFromCenter,10),
+            endY = toCenterY - parseInt(Math.sin(theta * Math.PI / 180) * distanceFromCenter,10);
 
         utils.log(
-            "drawing wormhole from #" + from + " (" + fromX + "," + fromY + ") to #" +
-                to + " (" + toX + "," + toY + ")"
+            "drawing wormhole #" + id + " from #" + from + " (" + startX + "," + startY + ") to #" +
+                to + " (" + endX + "," + endY + ")"
         );
 
         $("#mapCanvas").drawLine({
             layer       : true,
+            name        : "wormhole-"+id,
             group       : "wormholes",
+            startArrow  : true,
+            endArrow    : true,
+            arrowRadius : arrowRadius,
+            arrowAngle  : arrowAngle,
             strokeStyle : wormHoleColor,
             strokeWidth : strokeWidth,
-            x1          : fromX,
-            y1          : fromY,
-            x2          : toX,
-            y2          : toY
+            x1          : startX,
+            y1          : startY,
+            x2          : endX,
+            y2          : endY
         });
 
     } // ===============================================================================================================
