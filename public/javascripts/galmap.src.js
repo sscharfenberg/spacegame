@@ -23,12 +23,11 @@ window.galmap = window.galmap || {
             location.href = "http://www.google.de/intl/de/chrome/browser/";
         }
 
-        // define local and global jquery objects ----------------------------------------------------------------------
         var $mapviewport = $("#mapViewPort"),
             $rulervertviewport = $("#viewPortRulerVert");
 
         // adjust height of map and vertical ruler to the same value as map width --------------------------------------
-        // width has correct value from css, we can't do that with height
+        // width has correct value from css, we can't do that with height (flexbox to the rescue! in 2015 maybe.)
         // we need to assign the height twice because of a jQuery glitch (.width() outputs wrong value)
         $mapviewport.height($mapviewport.width()).height($mapviewport.width());
         $rulervertviewport.height($mapviewport.height());
@@ -41,17 +40,17 @@ window.galmap = window.galmap || {
         mapdata.done(function (data) { // once the JSON promise is fulfilled, this function gets executed --------------
             utils.log("Data recieved from JSON",data);
             galmap.mapdata = data; // save JSON data in global object
-            galmap.setInitialZoom();
-            galmap.drawMap(data);
-            // now that the map is drawn, assign drag, focus and bindZoom events
-            galmap.setInitialCoords();
-            galmap.bindMapDragging();
-            galmap.bindRulerDragging();
-            galmap.bindFocusButton(".mapbutton.focushome", data.systems[data.home].x, data.systems[data.home].y);
-            galmap.bindZoom();
-            // everything done
-            $(".overlay.loading").hide();
-            utils.log("finished drawing map!");
+            galmap.setInitialZoom(); // get initial zoom from localstorage and prepare DOM properties
+            galmap.drawMap(data); // draw map
+            galmap.setInitialCoords(); // get coords from localstorage and focus map
+            galmap.bindMapDragging(); // bind map dragging
+            galmap.bindRulerDragging(); // bind ruler dragging
+            galmap.bindFocusButton( // TODO: temporary. needs better method to determine home system
+                ".mapbutton.focushome", data.systems[data.home].x, data.systems[data.home].y
+            );
+            galmap.bindZoom(); // bind zoom buttons +/-
+            $(".overlay.loading").hide(); // hide overlay
+            utils.log("========== FINISHED DRAWING MAP! ==========");
         }).fail(function (error) {
             utils.log("faled to recieve data from JSON",error);
             $(".overlay.jsonfail").show(); // show loading overlay
@@ -108,7 +107,6 @@ window.galmap = window.galmap || {
 
         var $galMapCanvas = $("#mapCanvas");
 
-
         var mapSquarePixels = galmap.tilesize * map.settings.size;
         // prepare canvas with correct width and height (html has default) ---------------------------------------------
         $galMapCanvas.prop({ width: mapSquarePixels, height: mapSquarePixels });
@@ -158,7 +156,7 @@ window.galmap = window.galmap || {
             posY2 = $galMapCanvas.height();
             $galMapCanvas.drawLine({
                 layer       : true,
-                groups      : "grid",
+                groups      : ["grid"],
                 strokeStyle : gridColor,
                 strokeWidth : strokeWidth,
                 x1          : posX1,
@@ -173,7 +171,7 @@ window.galmap = window.galmap || {
             posY2 = (galmap.tilesize * i) + galmap.tilesize;
             $galMapCanvas.drawLine({
                 layer       : true,
-                group       : "grid",
+                groups      : ["grid"],
                 strokeStyle : gridColor,
                 strokeWidth : strokeWidth,
                 x1          : posX1,
@@ -254,7 +252,6 @@ window.galmap = window.galmap || {
         }
 
         // and the static lines that work as border for the rulers -----------------------------------------------------
-        // 0 is needed because we want a centered 2px stroke => 1px visible in canvas
         // horizontal: we start at bottom right because the rightmost seperator was already drawn
         $horzcanvas.drawLine({
             strokeStyle: gridColor, strokeWidth: 2,
@@ -528,7 +525,6 @@ window.galmap = window.galmap || {
                     localStorage["galmap.coords.x"] = currentCoordX;
                     localStorage["galmap.coords.y"] = currentCoordY;
                 }
-
             }
 
             // Zoom Out ------------------------------------------------------------------------------------------------
@@ -626,13 +622,18 @@ window.galmap = window.galmap || {
             imageSquarePixel = Math.round((galmap.tilesize * 4) / 5),
             tickerTextSize = "10pt",
             tickerTextColor = "#fff";
+        if ((galmap.tilesize >= 50) && (galmap.tilesize < 65)) { tickerTextSize = "9pt"; }
+        if ((galmap.tilesize >= 35) && (galmap.tilesize < 50)) { tickerTextSize = "7pt"; }
+        if ((galmap.tilesize >= 20) && (galmap.tilesize < 35)) { tickerTextSize = "6pt"; }
 
         utils.log(
-            "drawing system - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner.ticker + ", spectral: " +
-            galmap.mapdata.systems[id].spectral + ", x: " + coordX + "(" + canvasX + "), y: " +
-            coordY + "(" + canvasY + ")"
+            "drawing system - id: " + id + ", owner: " +
+                galmap.mapdata.empires[galmap.mapdata.systems[id].owner].ticker + ", spectral: " +
+                galmap.mapdata.systems[id].spectral + ", x: " + coordX + "(" + canvasX + "), y: " +
+                coordY + "(" + canvasY + ")"
         );
 
+        // paint image of system
         $galMapCanvas.drawImage({
             source          : $("#spriteStars").prop("src"),
             sWidth          : spriteSquarePixels, // width of cropped sprite
@@ -643,7 +644,7 @@ window.galmap = window.galmap || {
             layer           : true,
             clickable       : true,
             name            : "system-"+id+"planet",
-            group           : "system-"+id,
+            groups          : ["systems","system-"+id],
             x               : canvasX,
             y               : canvasY,
             width           : imageSquarePixel,
@@ -653,34 +654,35 @@ window.galmap = window.galmap || {
             mouseout: function () { $(this).css("cursor", "move"); },
             click: function () {
                 utils.log( // this is temporary of course, pending further game specification
-                    "clicked on star - id: " + id + ", owner: " + galmap.mapdata.systems[id].owner.id +
+                    "clicked on star - id: " + id + ", owner: [" +
+                        galmap.mapdata.empires[galmap.mapdata.systems[id].owner].ticker + "]" +
                         ", spectral: " + galmap.mapdata.systems[id].spectral
                 );
             }
         });
 
-        if ((galmap.tilesize >= 50) && (galmap.tilesize < 65)) { tickerTextSize = "9pt"; }
-        if ( (galmap.tilesize >= 35) && (galmap.tilesize < 50) ) { tickerTextSize = "7pt"; }
-        if ((galmap.tilesize >= 20) && (galmap.tilesize < 35)) { tickerTextSize = "6pt"; }
-
-        if (galmap.mapdata.systems[id].owner.id !== 0) {
+        // draw owner text
+        if (galmap.mapdata.systems[id].owner !== 0) {
             $galMapCanvas.drawText({
-                layer: true,
-                name: "system-" + id + "owner",
-                group: "system-" + id,
-                fontSize: tickerTextSize,
-                fontFamily: "Arial",
-                fillStyle: tickerTextColor,
-                x: (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
-                y: (coordY * galmap.tilesize),
-                fromCenter: true,
-                text: "["+galmap.mapdata.systems[id].owner.ticker+"]", // TODO: Change data format in JSON so the ticker is seperate from systems
-                mouseover: function () { $galMapCanvas.css("cursor", "pointer"); },
-                mouseout: function () { $(this).css("cursor", "move"); },
-                click: function () {
+                layer       : true,
+                name        : "system-" + id + "owner",
+                groups      : ["systems","system-" + id],
+                fontSize    : tickerTextSize,
+                fontFamily  : "Arial",
+                fillStyle   : tickerTextColor,
+                x           : (coordX * galmap.tilesize) + Math.round(galmap.tilesize / 2),
+                y           : (coordY * galmap.tilesize),
+                fromCenter  : true,
+                text        : galmap.mapdata.empires[galmap.mapdata.systems[id].owner].ticker,
+                shadowColor : "#fff",
+                shadowBlur  : 10,
+                mouseover   : function () { $galMapCanvas.css("cursor", "pointer"); },
+                mouseout    : function () { $(this).css("cursor", "move"); },
+                click       : function () {
                     utils.log( // this is temporary of course, pending further game specification
-                        "clicked on star owner - id: " + galmap.mapdata.systems[id].owner.id + ", owner: [" +
-                            galmap.mapdata.systems[id].owner.ticker + "]"
+                        "clicked on star owner - id: " + galmap.mapdata.systems[id].owner + ", owner: [" +
+                            galmap.mapdata.empires[galmap.mapdata.systems[id].owner].ticker + "] " +
+                            galmap.mapdata.empires[galmap.mapdata.systems[id].owner].name
                     );
                 }
             });
@@ -692,15 +694,13 @@ window.galmap = window.galmap || {
     // from and to are the IDs of the systems that are linked
     drawWormHole: function (id,from,to) {
 
-        var strokeWidth = 2, wormHoleColor = "#6e93b8", arrowRadius = 10, arrowAngle = 20;
+        var strokeWidth = 2, wormHoleColor = "#6e93b8", pointRadius;
         // adjust size of arrows and lines for different zoom levels. this is only an approximation, not really exact.
-        if (galmap.tilesize >= 50) { strokeWidth = 3; }
-        if (galmap.tilesize >= 65) { strokeWidth = 4; }
-        if (galmap.tilesize <= 20) { strokeWidth = 1; arrowRadius = 4; }
-        if (galmap.tilesize > 20) { arrowRadius = 7; }
-        if (galmap.tilesize > 50) { arrowRadius = 13; }
-        if (galmap.tilesize > 65) { arrowRadius = 16; }
-
+        if (galmap.tilesize >= 20) { strokeWidth = 1; pointRadius = 2; }
+        if (galmap.tilesize >= 35) { strokeWidth = 1; pointRadius = 2.5; }
+        if (galmap.tilesize >= 50) { strokeWidth = 3; pointRadius = 4; }
+        if (galmap.tilesize >= 65) { strokeWidth = 4; pointRadius = 5; }
+        if (galmap.tilesize >= 80) { strokeWidth = 5; pointRadius = 6; }
 
         // get the point in the middle of the tile (origin of planet circle)
         var fromCenterX = (galmap.mapdata.systems[from].x * galmap.tilesize) + Math.round(galmap.tilesize / 2),
@@ -712,8 +712,9 @@ window.galmap = window.galmap || {
             deltaX = toCenterX - fromCenterX,
             theta = Math.atan2(deltaY, deltaX) * 180 / Math.PI, // angle in degrees
         // get the radius of the planets circle.
-            distanceFromCenter = Math.round((galmap.tilesize * 4) / 8),// = radius. we use a slightly bigger radius
-        // now find the coordinates of the point on the circle. these coordinates are relative to the circles center
+            distanceFromCenter = Math.round(galmap.tilesize  / 2),// = radius.
+        // now find the coordinates of the point on the circle. these coordinates are relative to the circles center,
+        // so we need to add (start) and substract (end) the position of the circle center
             startX = parseInt(Math.cos(theta * Math.PI / 180) * distanceFromCenter,10) + fromCenterX,
             startY = parseInt(Math.sin(theta * Math.PI / 180) * distanceFromCenter,10) + fromCenterY,
             endX = toCenterX - parseInt(Math.cos(theta * Math.PI / 180) * distanceFromCenter,10),
@@ -724,20 +725,35 @@ window.galmap = window.galmap || {
                 to + " (" + endX + "," + endY + ")"
         );
 
-        $("#mapCanvas").drawLine({
+        $("#mapCanvas").drawLine({ // start with the line connecting the two systems
             layer       : true,
+            rounded     : true,
             name        : "wormhole-"+id,
-            group       : "wormholes",
-            startArrow  : true,
-            endArrow    : true,
-            arrowRadius : arrowRadius,
-            arrowAngle  : arrowAngle,
+            groups      : ["wormholes","wormhole-"+id],
             strokeStyle : wormHoleColor,
             strokeWidth : strokeWidth,
             x1          : startX,
             y1          : startY,
             x2          : endX,
             y2          : endY
+        }).drawArc({ // draw circle at the beginning of the wormhole
+            layer       : true,
+            rounded     : true,
+            name        : "wormhole-" + id + "-startarc",
+            groups      : ["wormholes", "wormhole-"+id],
+            fillStyle   : wormHoleColor,
+            x           : startX,
+            y           : startY,
+            radius      : pointRadius
+        }).drawArc({ // draw circle at the end of the wormhole
+            layer       : true,
+            rounded     : true,
+            name        : "wormhole-" + id + "-endarc",
+            groups      : ["wormholes", "wormhole-"+id],
+            fillStyle   : wormHoleColor,
+            x           : endX,
+            y           : endY,
+            radius      : pointRadius
         });
 
     } // ===============================================================================================================
