@@ -1,11 +1,14 @@
 {
     "settings": {
-        "size": 40
+        "size": {
+            "width": 40,
+            "height": 40
+        }
     },
     "systems": [
         {
             "id": 0,
-            "owner": 0,
+            "owner": 2,
             "spectral": 0,
             "x": 0,
             "y": 0
@@ -135,6 +138,69 @@
             "spectral": 9,
             "x": 5,
             "y": 20
+        },
+        {
+            "id": 19,
+            "owner": 0,
+            "spectral": 4,
+            "x": 21,
+            "y": 27
+        },
+        {
+            "id": 20,
+            "owner": 1,
+            "spectral": 6,
+            "x": 27,
+            "y": 22
+        },
+        {
+            "id": 21,
+            "owner": 10,
+            "spectral": 1,
+            "x": 7,
+            "y": 29
+        },
+        {
+            "id": 22,
+            "owner": 10,
+            "spectral": 3,
+            "x": 37,
+            "y": 30
+        },
+        {
+            "id": 23,
+            "owner": 10,
+            "spectral": 9,
+            "x": 15,
+            "y": 10
+        },
+        {
+            "id": 24,
+            "owner": 0,
+            "spectral": 8,
+            "x": 30,
+            "y": 1
+        },
+        {
+            "id": 25,
+            "owner": 0,
+            "spectral": 5,
+            "x": 37,
+            "y": 17
+        },
+        {
+            "id": 26,
+            "owner": 9,
+            "spectral": 4,
+            "x": 19,
+            "y": 21
+        },
+        {
+            "id": 27,
+            "owner": 0,
+            "spectral": 4,
+            "x": 24,
+            "y": 9
         }
     ],
     "wormholes": [
@@ -234,52 +300,87 @@
             "to": 13
         }
     ],
-    "home": 9,
     "empires": [
         {
             "id": 0,
             "ticker": "CMW",
-            "name": "Commonwealth of Mankind"
+            "name": "Commonwealth of Mankind",
+            "standing": 0
         },
         {
             "id": 1,
             "ticker": "TRI",
-            "name": "Triumvirate"
+            "name": "Triumvirate",
+            "standing": 5
         },
         {
             "id": 2,
             "ticker": "FS",
-            "name": "Fallen Souls"
+            "name": "Fallen Souls",
+            "standing": -5
         },
         {
             "id": 3,
             "ticker": "LWTAX",
-            "name": "Goonfleet"
+            "name": "Goonfleet",
+            "standing": -5
         },
         {
             "id": 4,
             "ticker": "KILLU",
-            "name": "Dead Terrorists"
+            "name": "Dead Terrorists",
+            "standing": 0
         },
         {
             "id": 5,
             "ticker": "DARK",
-            "name": "Dark-Rising"
+            "name": "Dark-Rising",
+            "standing": 5
         },
         {
             "id": 6,
             "ticker": "U-K",
-            "name": "Uhsra Khan"
+            "name": "Uhsra Khan",
+            "standing": 10
         },
         {
             "id": 7,
             "ticker": "MOO",
-            "name": "Gentleman of Moo"
+            "name": "Gentleman of Moo",
+            "standing": -5
         },
         {
             "id": 8,
             "ticker": "ASCN",
-            "name": "Ascendant Frontier"
+            "name": "Ascendant Frontier",
+            "standing": -10
+        },
+        {
+            "id": 9,
+            "ticker": "007",
+            "name": "League of Gentleman",
+            "standing": -2
+        },
+        {
+            "id": 10,
+            "ticker": "ME",
+            "name": "My Test Empire",
+            "standing": 99
         }
-    ]
+    ],
+    "player": {
+        "id": 10,
+        "home": 23,
+        "systems": [
+            {
+                "id": 23
+            },
+            {
+                "id": 22
+            },
+            {
+                "id": 21
+            }
+        ]
+    }
 }

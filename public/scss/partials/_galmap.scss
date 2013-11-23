@@ -4,13 +4,15 @@
 // *********************************************************************************************************************
 //
 $mapBg: "galmap/background.map.stars.jpg";
+$warnColor : #87bcf1;
 // Main Section ========================================================================================================
 .map.galactic {
     position                           : relative;
     width                              : 100%;
-    max-width                          : 600px; // TODO: this value is temporary
+    max-width                          : 900px; // this is the maximum for performance reasons.
     min-width                          : 300px;
-    background                         : #eee; // TODO: this color is temporary just to make layout easier
+    background                         : image-url($mapBg) repeat;
+    background-size                    : image-width($mapBg) image-height($mapBg);
     padding                            : 2%;
     .hiddenImages {
         display                        : none;
@@ -21,8 +23,6 @@ $mapBg: "galmap/background.map.stars.jpg";
         overflow                       : hidden;
         position                       : relative;
         width                          : 100%;
-        height                         : 100px; // this is set by galmap.src.js to correct value
-        background                     : #000;
         z-index                        : 2;
         &:hover {
             cursor                     : move;
@@ -30,9 +30,30 @@ $mapBg: "galmap/background.map.stars.jpg";
         #mapCanvas {
             z-index                    : 1;
             position                   : relative;
-            background                 : image-url($mapBg) repeat;
-            background-size            : image-width($mapBg) image-height($mapBg);
+            background                 : rgba(#333, 0.4);
         }
+    }
+    .tiltBottom { @include box-shadow(0 5px 0 rgba($warnColor, 0.5)); }
+    .tiltTop { @include box-shadow(0 -5px 0 rgba($warnColor, 0.5)); }
+    .tiltLeft { @include box-shadow(-5px 0 0 rgba($warnColor, 0.5)); }
+    .tiltRight { @include box-shadow(5px 0 0 rgba($warnColor, 0.5)); }
+    .tiltTop.tiltLeft { @include box-shadow(-5px -5px 0 rgba($warnColor, 0.5)) }
+    .tiltTop.tiltRight { @include box-shadow(5px -5px 0 rgba($warnColor, 0.5)) }
+    .tiltBottom.tiltLeft { @include box-shadow(-5px 5px 0 rgba($warnColor, 0.5)) }
+    .tiltBottom.tiltRight { @include box-shadow(5px 5px 0 rgba($warnColor, 0.5)) }
+    .tiltTop.tiltBottom {
+        @include box-shadow(0 -5px 0 rgba($warnColor, 0.5), 0 5px 0 rgba($warnColor, 0.5))
+    }
+    .tiltLeft.tiltRight {
+        @include box-shadow(-5px 0 0 rgba($warnColor, 0.5), 5px 0 0 rgba($warnColor, 0.5))
+    }
+    .tiltLeft.tiltRight.tiltBottom.tiltTop {
+        @include box-shadow(
+            -5px 0 0 rgba($warnColor, 0.5),
+            5px 0 0 rgba($warnColor, 0.5),
+            0 -5px 0 rgba($warnColor, 0.5),
+            0 5px 0 rgba($warnColor, 0.5)
+        )
     }
 //
     // Horizontal Ruler With Coordinates - viewport and canvas =========================================================
@@ -42,14 +63,11 @@ $mapBg: "galmap/background.map.stars.jpg";
         width                          : 100%;
         height                         : 25px;
         margin-bottom                  : 5px;
-        background                     : #000;
+        background                     : rgba(#333, 0.4);
         border-top-right-radius        : 5px;
         #rulerHorzCanvas {
             z-index                    : 1;
             position                   : relative;
-            &:hover {
-                cursor                 : e-resize;
-            }
         }
     }
 //
@@ -58,15 +76,11 @@ $mapBg: "galmap/background.map.stars.jpg";
         overflow                       : hidden;
         position                       : relative;
         width                          : 25px;
-        height                         : 100px; // this is set by galmap.src.js to correct value
-        background                     : #000;
+        background                     : rgba(#333, 0.4);
         border-bottom-left-radius      : 5px;
         #rulerVertCanvas {
             z-index                    : 1;
             position                   : relative;
-            &:hover {
-                cursor                 : n-resize;
-            }
         }
     }
 //
@@ -79,7 +93,7 @@ $mapBg: "galmap/background.map.stars.jpg";
         margin-bottom                  : 5px;
         vertical-align                 : middle;
         text-indent                    : -1000em;
-        background                     : #000;
+        background                     : rgba(#333, 0.4);
         border-top-left-radius         : 5px;
         &:before {
             position                   : absolute;
@@ -141,7 +155,7 @@ $mapBg: "galmap/background.map.stars.jpg";
             background                 : rgba(#fff, 0.7);
             @include transition(all 500ms ease);
             @include border-radius(2px);
-            box-shadow                 : 1px 1px 5px rgba(#000,0.8);
+            box-shadow                 : 0 0 5px rgba(#fff,0.8);
             &:before {
                 position               : absolute;
                 left                   : 4px;
@@ -159,11 +173,15 @@ $mapBg: "galmap/background.map.stars.jpg";
             }
             &.in:before { content      : "\E237"; }
             &.out:before { content     : "\E238"; }
-            &:hover { background       : rgba(#fff, 1); }
+            &:hover {
+                background             : rgba(#fff, 1);
+                box-shadow             : 0 0 10px rgba(#fff, 0.9);
+            }
             &:hover:before { color     : #000; }
             &.disabled {
                 background             : rgba(#ddd, 0.5);
                 cursor                 : not-allowed;
+                box-shadow             : none;
             }
             &.disabled:hover:before {
                 color                  : #333;
@@ -178,7 +196,7 @@ $mapBg: "galmap/background.map.stars.jpg";
             background                 : rgba(#fff, 0.7);
             @include border-radius(2px);
             @include transition(all 500ms ease);
-            box-shadow                 : 1px 1px 5px rgba(#000, 0.8);
+            box-shadow                 : 0 0 5px rgba(#fff, 0.8);
             padding                    : 5px 0;
             span {
                 text-indent            : -1000em;

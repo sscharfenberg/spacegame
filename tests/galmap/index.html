@@ -12,16 +12,6 @@
     <body>
 
         <h1>Game Tests: Galactic Map</h1>
-        <ul>
-            <li>IE9+, other somewhat modern browsers (canvas, canvastext)</li>
-            <li>map data is fetched from server via JSON.</li>
-            <li>map stage is fluid; while the canvas is not. Smaller Screen size - smaller viewport for map, map is not scaled (css scaling of canvas sucks big time).<br />NO window.resize handler since noone but devs does it anyway.</li>
-            <li>Map and ruler are draggable - drag one and both change.</li>
-            <li>check for collision with edges - map can not be dragged too far</li>
-            <li>stars can be interacted with. at the moment, click on a star just outputs debug info to console since this is just a test. exact integration of map tbd.</li>
-            <li>Map can be zoomed. Variable number of zoom levels available. Since we do not scale the map but rather redraw it, the position of the central tile is remembered and the square centered after "zooming".</li>
-            <li>Zoom level and the focussed coordinates are saved via localStorage</li>
-        </ul>
 
         <section class="map galactic clearfix">
 
@@ -65,25 +55,19 @@
                         <canvas id="rulerHorzCanvas"></canvas>
                     </div>
                     <div id="mapViewPort">
-                        <canvas id="mapCanvas"></canvas><!-- TODO: remove width/height attributes -->
+                        <canvas id="mapCanvas"></canvas>
                     </div>
                     <nav role="navigation" class="zoom clearfix">
                         <div id="currentZoomMarker">
                             <span>80</span><span>65</span><span>50</span><span>35</span><span>20</span>
                         </div><!-- /#currentZoomMarker -->
-                        <a href="#" class="icon in">+</a>
-                        <a href="#" class="icon out">-</a>
+                        <a href="" class="icon in">+</a>
+                        <a href="" class="icon out">-</a>
                     </nav>
                 </div><!-- /.stage.right -->
             </div><!-- /.theatre -->
 
         </section><!-- /.map.galactic -->
-
-        <p>TODO:</p>
-        <ul>
-            <li>Arrows for fleet movement</li>
-            <li>click on star - info window</li>
-        </ul>
 
 <!-- bo Asynchronuous Javascripts ================================================================================== -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
