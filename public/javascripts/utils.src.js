@@ -8,6 +8,7 @@
 window.utils = window.utils || {
 
     DEBUG: true,
+    VERBOSE: false,
 
     init: function () {
 

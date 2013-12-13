@@ -114,20 +114,25 @@ window.galmap = window.galmap || {
         var numSystemsDrawn = 0;
         utils.log("============ START DRAWING MAP ============");
         galmap.prepareStages(map);
+
         // draw grid ---------------------------------------------------------------------------------------------------
         galmap.drawGrid(map, galmap.cameraX, galmap.cameraY);
+
         // draw rulers with coordinates --------------------------------------------------------------------------------
         galmap.drawRulers(map, galmap.cameraX, galmap.cameraY);
+
         // draw all wormholes from JSON --------------------------------------------------------------------------------
         for (var j = 0; j < map.wormholes.length; j++) {
             galmap.drawWormHole(map.wormholes[j].id);
         }
         utils.log("number of wormholes: " + map.wormholes.length);
+
         // draw all planets from JSON (only visible ones) --------------------------------------------------------------
         for (var i = 0; i < map.systems.length; i++) {
             if (galmap.drawSystem(map.systems[i].id)) { numSystemsDrawn++; }
         }
         utils.log("number of systems: " + map.systems.length + ". Drawn on canvas: " + numSystemsDrawn);
+
         utils.log("========== FINISHED DRAWING MAP ===========");
 
     }, // ==============================================================================================================
@@ -353,7 +358,9 @@ window.galmap = window.galmap || {
             var draggedY = Math.abs(parseInt($galMapCanvas.css("top"), 10)) - parseInt($viewPort.width(), 10);
             utils.log("dragged map by .. x:" + draggedX + ", y:" + draggedY);
 
-            galmap.addCurrentOffSet(draggedX, draggedY); // add the dragged amount to cameraX and cameraY
+            // add the dragged amount to cameraX and cameraY
+            galmap.setCamera(galmap.cameraX + draggedX, galmap.cameraY + draggedY);
+
             // redraw map. this is important so we keep the canvas small-ish and performance decent
             galmap.drawMap(galmap.mapData);
 
@@ -416,7 +423,6 @@ window.galmap = window.galmap || {
             coords, coordX, coordY;
 
         // find out on which coords we are currently focussed.
-        // TODO: use this as function convertCameraToCenteredCoords
         coords = galmap.convertCameraToCenteredCoords(galmap.cameraX, galmap.cameraY, oldTileSize);
         coordX = coords.x;
         coordY = coords.y;
@@ -533,7 +539,7 @@ window.galmap = window.galmap || {
                     y           : currentSystem.y - Math.round(galmap.tileSize / 2) + parseInt(tickerTextSize, 10) / 2,
                     text        : currentSystem.ownerticker,
                     shadowColor : "#fff",
-                    shadowBlur  : 10,
+                    shadowBlur  : (parseInt(tickerTextSize, 10) / 3),
                     mouseover   : function () { $galMapCanvas.css("cursor", "pointer"); },
                     mouseout    : function () { $(this).css("cursor", "move"); },
                     mousedown   : function () {
@@ -546,11 +552,13 @@ window.galmap = window.galmap || {
                 });
             }
 
-            utils.log(
-                "drawing system - id: " + id + ", owner: " + currentSystem.ownerticker + ", spectral: " +
-                    galmap.mapData.systems[id].spectral + ", x: " + currentSystem.coordy + "(" + currentSystem.x +
-                    "), y: " + currentSystem.coordx + "(" + currentSystem.y + ")"
-            );
+            if (utils.VERBOSE) {
+                utils.log(
+                    "drawing system - id: " + id + ", owner: " + currentSystem.ownerticker + ", spectral: " +
+                        galmap.mapData.systems[id].spectral + ", x: " + currentSystem.coordy + "(" + currentSystem.x +
+                        "), y: " + currentSystem.coordx + "(" + currentSystem.y + ")"
+                );
+            }
 
         }
 
@@ -609,12 +617,6 @@ window.galmap = window.galmap || {
 
         var currentWormHole = new galmap.WormHole(id);
 
-        utils.log(
-            "drawing wormhole #" + id + " from #" + currentWormHole.from + " (" +
-            currentWormHole.startcoordx + "," + currentWormHole.startcoordy + ") to #" + currentWormHole.to +
-            " (" + currentWormHole.endcoordx + "," + currentWormHole.endcoordy + ")"
-        );
-
         $("#mapCanvas").drawLine({ // start with the line connecting the two systems
             layer       : true,
             rounded     : true,
@@ -645,6 +647,14 @@ window.galmap = window.galmap || {
             y           : currentWormHole.endy,
             radius      : pointRadius
         });
+
+        if (utils.VERBOSE) {
+            utils.log(
+                "drawing wormhole #" + id + " from #" + currentWormHole.from + " (" +
+                    currentWormHole.startcoordx + "," + currentWormHole.startcoordy + ") to #" + currentWormHole.to +
+                    " (" + currentWormHole.endcoordx + "," + currentWormHole.endcoordy + ")"
+            );
+        }
 
     }, // ==============================================================================================================
 
@@ -693,21 +703,71 @@ window.galmap = window.galmap || {
     // focus the map on a specific tile and flash this tile ============================================================
     focusMap: function (coordX, coordY) {
 
-        utils.log("coordX:" + coordX + ", coordY:" + coordY);
+        // find the new camera position for redrawing the map ----------------------------------------------------------
+        var $galMapCanvas = $("#mapCanvas"),
+            $viewPort = $("#mapViewPort"),
+            fillStyle = "#153b61",
+            centerCoord = $viewPort.width() / galmap.tileSize / 2,
+            coordsOffScreenX = coordX - centerCoord,
+            coordsOffScreenY = coordY - centerCoord,
+            cameraX = parseInt(coordsOffScreenX * galmap.tileSize, 10) + Math.round(galmap.tileSize / 2),
+            cameraY = parseInt(coordsOffScreenY * galmap.tileSize, 10) + Math.round(galmap.tileSize / 2);
+        if (cameraX > (galmap.mapWidth - $viewPort.width())) { cameraX = galmap.mapWidth - $viewPort.width(); }
+        if (cameraY > (galmap.mapHeight - $viewPort.height())) { cameraY = galmap.mapHeight - $viewPort.height(); }
+
+        galmap.setCamera(cameraX, cameraY);
+        utils.log("center map on " + coordX + "(" + cameraX + "), " + coordY + "(" + cameraY + ")");
+        galmap.drawMap(galmap.mapData);
+
+
+        $galMapCanvas.stopLayerGroup("flashbg").removeLayerGroup("flashbg")
+        .drawRect({ // top
+            fillStyle: fillStyle, layer: true, groups: ["flashbg"], fromCenter: false,
+            x: (coordX * galmap.tileSize) - galmap.cameraX + $viewPort.width() + 1, y: 0,
+            width: galmap.tileSize - 2,
+            height: (coordY * galmap.tileSize) - galmap.cameraY + $viewPort.height() - 1
+        }).drawRect({ // right
+            fillStyle: fillStyle, layer: true, groups: ["flashbg"], fromCenter: false,
+            x: ((coordX + 1) * galmap.tileSize) - galmap.cameraX + $viewPort.width() + 1,
+            y: (coordY * galmap.tileSize) - galmap.cameraY + $viewPort.height() + 1,
+            width: ($viewPort.width() * 2),
+            height: galmap.tileSize - 2
+        }).drawRect({ // bottom
+            fillStyle: fillStyle, layer: true, groups: ["flashbg"], fromCenter: false,
+            x: (coordX * galmap.tileSize) - galmap.cameraX + $viewPort.width() + 1,
+            y: ((coordY + 1) * galmap.tileSize) - galmap.cameraY + $viewPort.height() + 1,
+            width: galmap.tileSize - 2,
+            height: ($viewPort.width() * 2)
+        }).drawRect({ // left
+            fillStyle: fillStyle, layer: true, groups: ["flashbg"], fromCenter: false,
+            x: 0, y: (coordY * galmap.tileSize) - galmap.cameraY + $viewPort.height() + 1,
+            width: (coordX * galmap.tileSize) - galmap.cameraX + $viewPort.width() - 1,
+            height: galmap.tileSize - 2
+        });
+        // animate the layergroup --------------------------------------------------------------------------------------
+        $galMapCanvas.animateLayerGroup("flashbg", { // flashbg animates background to transparent
+                fillStyle: "transparent"
+            }, 2000, "swing",
+            function () {
+                $galMapCanvas.removeLayerGroup("flashbg"); // remove layer again when done
+            }
+        ).drawLayers();
+
+
 
     }, // ==============================================================================================================
 
     // Save current offset to namespaced vars and localstorage =========================================================
     // cameraX, cameraY are the new offset of the map to the last position.
-    addCurrentOffSet: function (cameraX, cameraY) {
+    setCamera: function (cameraX, cameraY) {
 
         // add the new offset to current camera position, this becomes the new camera position.
-        galmap.cameraX += cameraX;
-        galmap.cameraY += cameraY;
+        galmap.cameraX = cameraX;
+        galmap.cameraY = cameraY;
 
         // reset to zero if negative. camera coords are by definition positive
         if (galmap.cameraX < 0) { galmap.cameraX = 0; }
-        if (galmap.cameraY < 0) { galmap.cameraX = 0; }
+        if (galmap.cameraY < 0) { galmap.cameraY = 0; }
 
         if (Modernizr.localstorage) {
             localStorage["galmap.camera.x"] = galmap.cameraX;
@@ -753,8 +813,8 @@ window.galmap = window.galmap || {
 
         var $viewPort = $("#mapViewPort");
         return {
-            x: Math.round(($viewPort.width() / tileSize / 2) + (cameraX / tileSize)),
-            y: Math.round(($viewPort.width() / tileSize / 2) + (cameraY / tileSize))
+            x: (cameraX / tileSize) + $viewPort.width() / (tileSize * 2),
+            y: (cameraY / tileSize) + $viewPort.width() / (tileSize * 2)
         };
 
     }, // ==============================================================================================================
