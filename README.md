@@ -3,6 +3,8 @@ spacegame
 
 Learning project for a HTML5 turn-based strategic space game
 
+(This repo was moved from bitbucket (private) to github (public), thats why there is no commit history or anything.
+
 This is a learning project for a turn-based strategic space game. While the game will probably never be realized, it serves as a useful reason to get better at Javascript.
 
 Galactic Map
