@@ -1,11 +1,10 @@
 spacegame
 =========
-
 Learning project for a HTML5 turn-based strategic space game
 
-(This repo was moved from bitbucket (private) to github (public), thats why there is no commit history or anything.
 
-This is a learning project for a turn-based strategic space game. While the game will probably never be realized, it serves as a useful reason to get better at Javascript.
+This is a learning project for a turn-based strategic space game. While the game will probably never be realized, it serves as a useful reason to get better at Javascript. However, the Vision(tm) is to create a strategic, turn-based space game that works on a multitude of different clients - desktop browsers, smartphones, tablets, whatever.
+
 
 Galactic Map
 ============
@@ -23,6 +22,7 @@ The current version works like this:
 The map size is flexible and adapts to available space (not on resize yet, though). The canvas width and height is three times the screensize of the map. When dragging, we have one viewport to the left/right/top/bottom available so something is shown while dragging. On dragstop the canvas is redrawn at the correct position. Localstorage is used to save zoomlevel and current map position.
 
 However, I am not happy with the performance of this version, and I want much much more stars (and players in one game). The map should be able to display gamemaps with several thousand stars and player empires; including wormholes, fleets, battles, cosmic events etc pp. So, the current rendering concept doesn't work. I need to think bigger ;P
+
 
 So, how am I going to improve on this?
 ======================================
